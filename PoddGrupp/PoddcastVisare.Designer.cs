@@ -1,6 +1,6 @@
 ﻿namespace poddd
 {
-    partial class Form1
+    partial class PoddcastVisare
     {
         /// <summary>
         /// Required designer variable.

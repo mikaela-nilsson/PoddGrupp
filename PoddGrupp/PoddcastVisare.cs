@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace poddd
 {
-    public partial class Form1 : Form
+    public partial class PoddcastVisare : Form
     {
-        public Form1()
+        public PoddcastVisare()
         {
             InitializeComponent();
         }
