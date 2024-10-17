@@ -1,4 +1,4 @@
-﻿namespace poddd
+﻿namespace PoddGrupp
 {
     partial class PoddcastVisare
     {
