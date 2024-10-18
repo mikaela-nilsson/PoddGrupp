@@ -34,10 +34,10 @@ namespace BL
                 Poddcast enPoddcast = new Poddcast
                 {
                     Id = item.Id.ToString(),
+                    Namn = item.Authors.FirstOrDefault()?.Name ?? "Okänt namn",
                     Titel = item.Title.Text,
                     Kategori = item.Categories.FirstOrDefault()?.Label ?? "Okänd kategori",
                     AntalAvsnitt = item.ElementExtensions.FirstOrDefault(ext => ext.OuterName == "antalAvsnitt")?.GetObject<int>() ?? 0,
-                    Namn = item.Authors.FirstOrDefault()?.Name ?? "Okänt namn",
                     Frekvens = item.ElementExtensions.FirstOrDefault(ext => ext.OuterName == "frekvens")?.GetObject<string>() ?? "Okänd frekvens"
 
                 };
