@@ -9,7 +9,7 @@ namespace Models
         public string Kategori { get; set; }
         public int AntalAvsnitt { get; set; }
         public string Namn { get; set; }
-        public string Frekvens { get; set; }
+        public string RSS { get; set; }
 
     }
 }

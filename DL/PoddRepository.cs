@@ -21,8 +21,22 @@ namespace DL
         }
 
         //ändra poddcast metod
-        //tabort poddcast metod
         //återställ metod
+
+        public void TaBortPodd(string namn)
+        {
+            //LINQ för att hitta podden/flödet med namnet som angivits
+            var poddcast = poddcastLista.FirstOrDefault(f => f.Namn == namn);
+
+            if (poddcast != null)
+            {
+                poddcastLista.Remove(poddcast);
+            }
+            else
+            {
+                throw new ArgumentException("Flödet kunde inte hittas");
+            }
+        }
 
     }
 }

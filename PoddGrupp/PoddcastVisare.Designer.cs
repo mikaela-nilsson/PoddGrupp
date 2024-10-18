@@ -105,11 +105,13 @@
             // cbKategori
             // 
             cbKategori.FormattingEnabled = true;
+            cbKategori.Items.AddRange(new object[] { "Okategoriserad" });
             cbKategori.Location = new Point(222, 845);
             cbKategori.Margin = new Padding(3, 4, 3, 4);
             cbKategori.Name = "cbKategori";
             cbKategori.Size = new Size(179, 33);
             cbKategori.TabIndex = 6;
+            cbKategori.Text = "Okategoriserad";
             // 
             // lblKategori
             // 
