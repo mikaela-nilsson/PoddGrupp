@@ -11,6 +11,7 @@ namespace DL
     public class PoddRepository
     {
         private List<Poddcast> poddcastLista = new List<Poddcast>();
+
         public void LäggTillPoddcast(Poddcast poddcast)
         {
             poddcastLista.Add(poddcast);
@@ -20,6 +21,10 @@ namespace DL
             return poddcastLista;
         }
 
+
+        //public void AndraNamnPaPodd(Poddcast podcast)
+    
+
         //ändra poddcast metod
         //återställ metod
 
@@ -27,14 +32,9 @@ namespace DL
         {
             //LINQ för att hitta podden/flödet med namnet som angivits
             var poddcast = poddcastLista.FirstOrDefault(f => f.Namn == namn);
-
             if (poddcast != null)
             {
                 poddcastLista.Remove(poddcast);
-            }
-            else
-            {
-                throw new ArgumentException("Flödet kunde inte hittas");
             }
         }
 

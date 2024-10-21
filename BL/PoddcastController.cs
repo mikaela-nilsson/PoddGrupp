@@ -19,32 +19,64 @@ namespace BL
 
         public List<Poddcast> HämtaAllaPoddcast()
         {
-
             return poddRepository.HämtaAllaPoddcast();
         }
 
-        //Hämtar och sparar nyheter från RSS-flöde till repository 
-        public void HämtaPoddcastFrånRss(string rssLank)
+
+        //Hämtar och sparar poddcast från RSS-flöde till repository 
+        public void HämtaPoddcastInformation(string rssLank)
         {
             XmlReader minXMLlasare = XmlReader.Create(rssLank);
             SyndicationFeed poddcastFlode = SyndicationFeed.Load(minXMLlasare);
 
             foreach (SyndicationItem item in poddcastFlode.Items)
             {
+                var avsnittTitel = item.Title.Text;  // Avsnittets titel
                 Poddcast enPoddcast = new Poddcast
                 {
                     Id = item.Id.ToString(),
-                    Namn = item.Authors.FirstOrDefault()?.Name ?? "Okänt namn",
+                    Namn = item.Authors.FirstOrDefault()?.Name ?? item.Title.Text,  // Använd titeln om författaren saknas
                     Titel = item.Title.Text,
                     Kategori = item.Categories.FirstOrDefault()?.Label ?? "Okänd kategori",
-                    AntalAvsnitt = item.ElementExtensions.FirstOrDefault(ext => ext.OuterName == "antalAvsnitt")?.GetObject<int>() ?? 0,
-                    RSS = rssLank
-
+                    AntalAvsnitt = poddcastFlode.Items.Count(),  // Räkna antal objekt i RSS-flödet
+                    RSS = rssLank,
+                    Avsnitt = poddcastFlode.Items.Select(i => i.Title.Text).ToList()  // Lägger till alla avsnittstitlar
                 };
-                poddRepository.LäggTillPoddcast(enPoddcast); //sparar podcasten
+               
+                poddRepository.LäggTillPoddcast(enPoddcast);  // Spara podcasten
+            } 
+        }
 
+
+        // Denna metod hämtar titlar på podcastavsnitt från ett angivet RSS-flöde och returnerar dem som en lista, eller kastar ett undantag vid fel.
+        public List<string> HämtaPoddcastAvsnitt(string rssLank)
+        {
+            try
+            {
+                XmlReaderSettings settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+
+                using (XmlReader minXMLlasare = XmlReader.Create(rssLank, settings))
+                {
+                    SyndicationFeed poddcastFlode = SyndicationFeed.Load(minXMLlasare);
+
+                    if (poddcastFlode == null || !poddcastFlode.Items.Any())
+                    {
+                        throw new Exception("RSS-flödet är ogiltigt eller innehåller inga avsnitt.");
+                    }
+
+                    List<string> avsnittTitlar = poddcastFlode.Items.Select(item => item.Title.Text).ToList();
+
+                    return avsnittTitlar;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Fel vid hämtning av RSS-flöde: {ex.Message}");
             }
         }
+
+
+
 
         //Här valideras om angivna RSS-länken och/eller flödets namn redan finns
         public (bool isValid, string meddelande) ValideraNyFlode(string rssLank, string namn)
@@ -63,33 +95,24 @@ namespace BL
             return (true, string.Empty);
         }
 
-        //Anropas i PoddcastVisare för att kunna kopplas till PoddRepository
         public void LaggTillFlode(string rssLank, string namn, string kategori)
         {
-            //Kontrollera att användaren har fyllt i alla fält
-            if (string.IsNullOrWhiteSpace(rssLank))
-            {
-                throw new ArgumentException("Vänligen fyll i fältet för RSS-länk.");
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(rssLank)) throw new ArgumentException("Vänligen fyll i fältet för RSS-länk.");
+            if (string.IsNullOrWhiteSpace(namn)) throw new ArgumentException("Vänligen fyll i fältet för Namn.");
 
-            if (string.IsNullOrWhiteSpace(namn))
-            {
-                throw new ArgumentException("Vänligen fyll i fältet för Namn.");
-                return;
-            }
-
-            //Skickar länken och namnet till valideringsmetoden och sparar returvärdet i en variabel
             var resultat = ValideraNyFlode(rssLank, namn);
+            if (!resultat.isValid) throw new ArgumentException(resultat.meddelande);
 
-            if (!resultat.isValid)
+            List<string> avsnitt = HämtaPoddcastAvsnitt(rssLank); 
+
+            var nyttFlode = new Poddcast
             {
-                throw new ArgumentException(resultat.meddelande);
-                return;
-            }
+                RSS = rssLank,
+                Namn = namn,
+                Kategori = kategori,
+                Avsnitt = avsnitt 
+            };
 
-            //Om det gick igenom valideringen kommer nya flödet att läggas till
-            var nyttFlode = new Poddcast { RSS = rssLank, Namn = namn, Kategori = kategori };
             poddRepository.LäggTillPoddcast(nyttFlode);
         }
 

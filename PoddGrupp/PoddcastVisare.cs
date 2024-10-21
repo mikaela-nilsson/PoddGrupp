@@ -16,30 +16,35 @@ namespace PoddGrupp
     {
 
         private PoddcastController poddcastController;
+
         public PoddcastVisare()
         {
             InitializeComponent();
-            poddcastController = new PoddcastController(); //Initiera controller
+            poddcastController = new PoddcastController(); 
         }
+
+        //Metod som körs när formuläret laddas. Den anropar en annan metod (FyllFlodeLista) för att fylla 
+        //en lista med med poddcastflöden när formuläret visas för användaren
         private void PoddcastVisare_Load(object sender, EventArgs e)
         {
-            //Fyller listan på flöden när man öppnar appen
             FyllFlodeLista();
         }
 
+        //Hämtar och visar namnen på alla podcast i en lista i användargränssnittet
         private void FyllFlodeLista()
         {
-            listaFloden.Items.Clear(); //Rensar listan innan den fylls på nytt
+            listaFloden.Items.Clear(); 
 
-            var allaFloden = poddcastController.HämtaAllaPoddcast(); //Hämtar alla befintliga flöden
+            var allaFloden = poddcastController.HämtaAllaPoddcast(); 
 
-            //LINQ används för att skapa en lista med alla flödens namn och sätta in de i vår form
             listaFloden.Items.AddRange(allaFloden.Select(p => p.Namn).ToArray());
         }
 
+         //Metoden lägger till en ny podcast genom att läsa den inmatade RSS-länken, namn och kategori
+         //och lägger därefter till flödet via controller. Därefter hämtar den avsnitten från poddcastflödet
+         //och visar dem i listan över avsnitt. Fungerar det så poppar meddelande upp. 
         private void btnLaggTill_Click(object sender, EventArgs e)
         {
-            //Lagrar den inmatade informationen i olika variabler
             string rssUrl = tbRSS.Text;
             string kategori = cbKategori.SelectedItem.ToString();
             string namn = tbNamn.Text;
@@ -47,18 +52,55 @@ namespace PoddGrupp
             try
             {
                 poddcastController.LaggTillFlode(rssUrl, namn, kategori);
-                MessageBox.Show("Flödet har lagts till!");
-            } catch (ArgumentException ex)
+
+                FyllFlodeLista();  
+
+                List<string> episodes = poddcastController.HämtaPoddcastAvsnitt(rssUrl);
+
+                listaAvsnitt.Items.Clear(); 
+                foreach (var episode in episodes)
+                {
+                    listaAvsnitt.Items.Add(episode); 
+                }
+
+                MessageBox.Show("Flödet har lagts till och avsnitten har hämtats!");
+            }
+            catch (ArgumentException ex)
             {
                 MessageBox.Show(ex.Message);
             }
 
-            //Töm fälten för RSS och Namn
             tbRSS.Text = "";
             tbNamn.Text = "";
-            //Uppdatera listan
-            FyllFlodeLista();
         }
+
+        //Metoden hanterar när man väljer ett poddcastflöde i listan. Den söker efter podcasten med 
+        //det valda namnet och om den hittas visas dess avsnitt i en annan lista. 
+        //Gör den inte det, då visas ett felmeddelande. 
+        private void listaFloden_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listaFloden.SelectedItem != null)
+            {
+                string selectedFeedName = listaFloden.SelectedItem.ToString();
+
+                var selectedFeed = poddcastController.HämtaAllaPoddcast().FirstOrDefault(f => f.Namn == selectedFeedName);
+
+                if (selectedFeed != null)
+                {
+                    listaAvsnitt.Items.Clear();
+
+                    foreach (var episode in selectedFeed.Avsnitt)
+                    {
+                        listaAvsnitt.Items.Add(episode);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Could not find the selected podcast.");
+                }
+            }
+        }
+
 
         private void btnTaBort_Click(object sender, EventArgs e)
         {
@@ -90,14 +132,6 @@ namespace PoddGrupp
                 }
             }
         }
-
-
-
-
-
-
-
-
 
         private void label1_Click(object sender, EventArgs e)
         {
@@ -143,5 +177,6 @@ namespace PoddGrupp
         {
 
         }
+
     }
 }

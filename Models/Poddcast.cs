@@ -10,6 +10,7 @@ namespace Models
         public int AntalAvsnitt { get; set; }
         public string Namn { get; set; }
         public string RSS { get; set; }
+        public List<string> Avsnitt { get; set; } = new List<string>();
 
     }
 }
