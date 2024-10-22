@@ -55,12 +55,12 @@ namespace PoddGrupp
 
                 FyllFlodeLista();  
 
-                List<string> episodes = poddcastController.HämtaPoddcastAvsnitt(rssUrl);
+                List<string> avsnitten = poddcastController.HämtaPoddcastAvsnitt(rssUrl);
 
                 listaAvsnitt.Items.Clear(); 
-                foreach (var episode in episodes)
+                foreach (var avsnitt in avsnitten)
                 {
-                    listaAvsnitt.Items.Add(episode); 
+                    listaAvsnitt.Items.Add(avsnitt); 
                 }
 
                 MessageBox.Show("Flödet har lagts till och avsnitten har hämtats!");
@@ -96,10 +96,12 @@ namespace PoddGrupp
                 }
                 else
                 {
-                    MessageBox.Show("Could not find the selected podcast.");
+                    MessageBox.Show("Kunde inte hitta den valda podcasten.");
                 }
             }
         }
+
+        //private void 
 
 
         private void btnTaBort_Click(object sender, EventArgs e)
