@@ -12,21 +12,18 @@ namespace DL
     {
         private List<Poddcast> poddcastLista = new List<Poddcast>();
 
+
+
         public void LäggTillPoddcast(Poddcast poddcast)
         {
             poddcastLista.Add(poddcast);
         }
+
+
         public List<Poddcast> HämtaAllaPoddcast()
         {
             return poddcastLista;
         }
-
-
-        //public void AndraNamnPaPodd(Poddcast podcast)
-    
-
-        //ändra poddcast metod
-        //återställ metod
 
         public void TaBortPodd(string namn)
         {

@@ -10,13 +10,14 @@ namespace BL
     {
         private PoddRepository poddRepository;
 
+
         public PoddcastController()
         {
             poddRepository = new PoddRepository();
         }
 
-        //Hämtar alla poddcast från repository
 
+        //Hämtar alla poddcast från repository
         public List<Poddcast> HämtaAllaPoddcast()
         {
             return poddRepository.HämtaAllaPoddcast();

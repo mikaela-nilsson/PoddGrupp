@@ -20,7 +20,7 @@ namespace PoddGrupp
         public PoddcastVisare()
         {
             InitializeComponent();
-            poddcastController = new PoddcastController(); 
+            poddcastController = new PoddcastController();
         }
 
         //Metod som körs när formuläret laddas. Den anropar en annan metod (FyllFlodeLista) för att fylla 
@@ -33,16 +33,16 @@ namespace PoddGrupp
         //Hämtar och visar namnen på alla podcast i en lista i användargränssnittet
         private void FyllFlodeLista()
         {
-            listaFloden.Items.Clear(); 
+            listaFloden.Items.Clear();
 
-            var allaFloden = poddcastController.HämtaAllaPoddcast(); 
+            var allaFloden = poddcastController.HämtaAllaPoddcast();
 
             listaFloden.Items.AddRange(allaFloden.Select(p => p.Namn).ToArray());
         }
 
-         //Metoden lägger till en ny podcast genom att läsa den inmatade RSS-länken, namn och kategori
-         //och lägger därefter till flödet via controller. Därefter hämtar den avsnitten från poddcastflödet
-         //och visar dem i listan över avsnitt. Fungerar det så poppar meddelande upp. 
+        //Metoden lägger till en ny podcast genom att läsa den inmatade RSS-länken, namn och kategori
+        //och lägger därefter till flödet via controller. Därefter hämtar den avsnitten från poddcastflödet
+        //och visar dem i listan över avsnitt. Fungerar det så poppar meddelande upp. 
         private void btnLaggTill_Click(object sender, EventArgs e)
         {
             string rssUrl = tbRSS.Text;
@@ -53,14 +53,14 @@ namespace PoddGrupp
             {
                 poddcastController.LaggTillFlode(rssUrl, namn, kategori);
 
-                FyllFlodeLista();  
+                FyllFlodeLista();
 
                 List<string> avsnitten = poddcastController.HämtaPoddcastAvsnitt(rssUrl);
 
-                listaAvsnitt.Items.Clear(); 
+                listaAvsnitt.Items.Clear();
                 foreach (var avsnitt in avsnitten)
                 {
-                    listaAvsnitt.Items.Add(avsnitt); 
+                    listaAvsnitt.Items.Add(avsnitt);
                 }
 
                 MessageBox.Show("Flödet har lagts till och avsnitten har hämtats!");
@@ -127,7 +127,7 @@ namespace PoddGrupp
                     //Uppdatera listan
                     FyllFlodeLista();
                     MessageBox.Show("Flödet har tagits bort.");
-                } 
+                }
                 catch (ArgumentException ex)
                 {
                     MessageBox.Show(ex.Message);
@@ -180,5 +180,9 @@ namespace PoddGrupp
 
         }
 
+        private void label1_Click_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }
