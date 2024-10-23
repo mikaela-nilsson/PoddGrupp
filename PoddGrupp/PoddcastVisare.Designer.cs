@@ -14,6 +14,7 @@ namespace PoddGrupp
         /// </summary>
         private void InitializeComponent()
         {
+            ListViewItem listViewItem1 = new ListViewItem("j");
             lblPoddcast = new Label();
             tbNamn = new TextBox();
             lblNamnPaFlodet = new Label();
@@ -24,7 +25,6 @@ namespace PoddGrupp
             btnLaggTill = new Button();
             btnAndra = new Button();
             btnTaBort = new Button();
-            listaFloden = new ListBox();
             lblKategorier = new Label();
             listaKategorier = new ListBox();
             btnTaBortKategori = new Button();
@@ -37,6 +37,9 @@ namespace PoddGrupp
             btnAterstall = new Button();
             comboBox1 = new ComboBox();
             lblNamnPaKategori = new Label();
+            listViewPodd = new ListView();
+            columnNamn = new ColumnHeader();
+            columnKategori = new ColumnHeader();
             SuspendLayout();
             // 
             // lblPoddcast
@@ -44,7 +47,7 @@ namespace PoddGrupp
             lblPoddcast.AutoSize = true;
             lblPoddcast.Font = new Font("Monotype Corsiva", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             lblPoddcast.ForeColor = Color.Sienna;
-            lblPoddcast.Location = new Point(261, 10);
+            lblPoddcast.Location = new Point(206, 14);
             lblPoddcast.Margin = new Padding(2, 0, 2, 0);
             lblPoddcast.Name = "lblPoddcast";
             lblPoddcast.Size = new Size(99, 28);
@@ -54,7 +57,7 @@ namespace PoddGrupp
             // tbNamn
             // 
             tbNamn.Location = new Point(155, 479);
-            tbNamn.Margin = new Padding(2, 2, 2, 2);
+            tbNamn.Margin = new Padding(2);
             tbNamn.Name = "tbNamn";
             tbNamn.Size = new Size(126, 23);
             tbNamn.TabIndex = 2;
@@ -80,23 +83,21 @@ namespace PoddGrupp
             lblRSSLank.Size = new Size(69, 18);
             lblRSSLank.TabIndex = 5;
             lblRSSLank.Text = "RSS Länk:";
-            lblRSSLank.Click += label1_Click;
             // 
             // tbRSS
             // 
             tbRSS.Location = new Point(155, 442);
-            tbRSS.Margin = new Padding(2, 2, 2, 2);
+            tbRSS.Margin = new Padding(2);
             tbRSS.Name = "tbRSS";
             tbRSS.Size = new Size(276, 23);
             tbRSS.TabIndex = 4;
-            tbRSS.TextChanged += textBox2_TextChanged;
             // 
             // cbKategori
             // 
             cbKategori.FormattingEnabled = true;
             cbKategori.Items.AddRange(new object[] { "Okategoriserad" });
             cbKategori.Location = new Point(155, 507);
-            cbKategori.Margin = new Padding(2, 2, 2, 2);
+            cbKategori.Margin = new Padding(2);
             cbKategori.Name = "cbKategori";
             cbKategori.Size = new Size(126, 23);
             cbKategori.TabIndex = 6;
@@ -112,13 +113,12 @@ namespace PoddGrupp
             lblKategori.Size = new Size(61, 18);
             lblKategori.TabIndex = 7;
             lblKategori.Text = "Kategori:";
-            lblKategori.Click += lblKategori_Click;
             // 
             // btnLaggTill
             // 
             btnLaggTill.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnLaggTill.Location = new Point(40, 552);
-            btnLaggTill.Margin = new Padding(2, 2, 2, 2);
+            btnLaggTill.Margin = new Padding(2);
             btnLaggTill.Name = "btnLaggTill";
             btnLaggTill.Size = new Size(76, 29);
             btnLaggTill.TabIndex = 8;
@@ -130,7 +130,7 @@ namespace PoddGrupp
             // 
             btnAndra.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnAndra.Location = new Point(261, 552);
-            btnAndra.Margin = new Padding(2, 2, 2, 2);
+            btnAndra.Margin = new Padding(2);
             btnAndra.Name = "btnAndra";
             btnAndra.Size = new Size(63, 29);
             btnAndra.TabIndex = 9;
@@ -141,26 +141,13 @@ namespace PoddGrupp
             // 
             btnTaBort.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnTaBort.Location = new Point(155, 552);
-            btnTaBort.Margin = new Padding(2, 2, 2, 2);
+            btnTaBort.Margin = new Padding(2);
             btnTaBort.Name = "btnTaBort";
             btnTaBort.Size = new Size(63, 29);
             btnTaBort.TabIndex = 10;
             btnTaBort.Text = "Ta Bort";
             btnTaBort.UseVisualStyleBackColor = true;
             btnTaBort.Click += btnTaBort_Click;
-            // 
-            // listaFloden
-            // 
-            listaFloden.BackColor = SystemColors.Window;
-            listaFloden.Font = new Font("Monotype Corsiva", 12F, FontStyle.Italic, GraphicsUnit.Point, 0);
-            listaFloden.FormattingEnabled = true;
-            listaFloden.ItemHeight = 18;
-            listaFloden.Location = new Point(38, 45);
-            listaFloden.Margin = new Padding(2, 2, 2, 2);
-            listaFloden.Name = "listaFloden";
-            listaFloden.Size = new Size(597, 346);
-            listaFloden.TabIndex = 11;
-            listaFloden.SelectedIndexChanged += listaFloden_SelectedIndexChanged;
             // 
             // lblKategorier
             // 
@@ -181,7 +168,7 @@ namespace PoddGrupp
             listaKategorier.FormattingEnabled = true;
             listaKategorier.ItemHeight = 18;
             listaKategorier.Location = new Point(1048, 473);
-            listaKategorier.Margin = new Padding(2, 2, 2, 2);
+            listaKategorier.Margin = new Padding(2);
             listaKategorier.Name = "listaKategorier";
             listaKategorier.Size = new Size(179, 130);
             listaKategorier.TabIndex = 14;
@@ -190,19 +177,18 @@ namespace PoddGrupp
             // 
             btnTaBortKategori.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnTaBortKategori.Location = new Point(835, 557);
-            btnTaBortKategori.Margin = new Padding(2, 2, 2, 2);
+            btnTaBortKategori.Margin = new Padding(2);
             btnTaBortKategori.Name = "btnTaBortKategori";
             btnTaBortKategori.Size = new Size(59, 19);
             btnTaBortKategori.TabIndex = 18;
             btnTaBortKategori.Text = "Ta Bort";
             btnTaBortKategori.UseVisualStyleBackColor = true;
-            btnTaBortKategori.Click += btnTaBortKategori_Click;
             // 
             // btnAndraKategori
             // 
             btnAndraKategori.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnAndraKategori.Location = new Point(942, 555);
-            btnAndraKategori.Margin = new Padding(2, 2, 2, 2);
+            btnAndraKategori.Margin = new Padding(2);
             btnAndraKategori.Name = "btnAndraKategori";
             btnAndraKategori.Size = new Size(60, 22);
             btnAndraKategori.TabIndex = 17;
@@ -213,29 +199,27 @@ namespace PoddGrupp
             // 
             btnLaggTillKategori.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnLaggTillKategori.Location = new Point(743, 557);
-            btnLaggTillKategori.Margin = new Padding(2, 2, 2, 2);
+            btnLaggTillKategori.Margin = new Padding(2);
             btnLaggTillKategori.Name = "btnLaggTillKategori";
             btnLaggTillKategori.Size = new Size(62, 19);
             btnLaggTillKategori.TabIndex = 16;
             btnLaggTillKategori.Text = "Lägg Till";
             btnLaggTillKategori.UseVisualStyleBackColor = true;
-            btnLaggTillKategori.Click += btnLaggTillKategori_Click;
             // 
             // tbNamnKategori
             // 
             tbNamnKategori.Location = new Point(887, 491);
-            tbNamnKategori.Margin = new Padding(2, 2, 2, 2);
+            tbNamnKategori.Margin = new Padding(2);
             tbNamnKategori.Name = "tbNamnKategori";
             tbNamnKategori.Size = new Size(115, 23);
             tbNamnKategori.TabIndex = 19;
-            tbNamnKategori.TextChanged += tbKategori_TextChanged;
             // 
             // lblAvsnitt
             // 
             lblAvsnitt.AutoSize = true;
             lblAvsnitt.Font = new Font("Monotype Corsiva", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             lblAvsnitt.ForeColor = Color.Sienna;
-            lblAvsnitt.Location = new Point(978, 10);
+            lblAvsnitt.Location = new Point(719, 14);
             lblAvsnitt.Margin = new Padding(2, 0, 2, 0);
             lblAvsnitt.Name = "lblAvsnitt";
             lblAvsnitt.Size = new Size(86, 28);
@@ -245,12 +229,11 @@ namespace PoddGrupp
             // beskrivningAvsnitt
             // 
             beskrivningAvsnitt.Location = new Point(1048, 45);
-            beskrivningAvsnitt.Margin = new Padding(2, 2, 2, 2);
+            beskrivningAvsnitt.Margin = new Padding(2);
             beskrivningAvsnitt.Name = "beskrivningAvsnitt";
             beskrivningAvsnitt.Size = new Size(185, 357);
             beskrivningAvsnitt.TabIndex = 22;
             beskrivningAvsnitt.Text = "";
-            beskrivningAvsnitt.TextChanged += beskrivningAvsnitt_TextChanged;
             // 
             // listaAvsnitt
             // 
@@ -258,18 +241,17 @@ namespace PoddGrupp
             listaAvsnitt.Font = new Font("Monotype Corsiva", 12F, FontStyle.Italic, GraphicsUnit.Point, 0);
             listaAvsnitt.FormattingEnabled = true;
             listaAvsnitt.ItemHeight = 18;
-            listaAvsnitt.Location = new Point(817, 45);
-            listaAvsnitt.Margin = new Padding(2, 2, 2, 2);
+            listaAvsnitt.Location = new Point(551, 45);
+            listaAvsnitt.Margin = new Padding(2);
             listaAvsnitt.Name = "listaAvsnitt";
-            listaAvsnitt.Size = new Size(185, 346);
+            listaAvsnitt.Size = new Size(451, 346);
             listaAvsnitt.TabIndex = 21;
-            listaAvsnitt.SelectedIndexChanged += listaAvsnitt_SelectedIndexChanged;
             // 
             // btnAterstall
             // 
             btnAterstall.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnAterstall.Location = new Point(455, 485);
-            btnAterstall.Margin = new Padding(2, 2, 2, 2);
+            btnAterstall.Margin = new Padding(2);
             btnAterstall.Name = "btnAterstall";
             btnAterstall.Size = new Size(108, 29);
             btnAterstall.TabIndex = 24;
@@ -280,7 +262,7 @@ namespace PoddGrupp
             // 
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(455, 442);
-            comboBox1.Margin = new Padding(4, 4, 4, 4);
+            comboBox1.Margin = new Padding(4);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(180, 23);
             comboBox1.TabIndex = 25;
@@ -294,7 +276,28 @@ namespace PoddGrupp
             lblNamnPaKategori.Size = new Size(102, 15);
             lblNamnPaKategori.TabIndex = 26;
             lblNamnPaKategori.Text = "Namn på kategori";
-            lblNamnPaKategori.Click += label1_Click_1;
+            // 
+            // listViewPodd
+            // 
+            listViewPodd.Columns.AddRange(new ColumnHeader[] { columnNamn, columnKategori });
+            listViewPodd.Items.AddRange(new ListViewItem[] { listViewItem1 });
+            listViewPodd.Location = new Point(155, 45);
+            listViewPodd.Name = "listViewPodd";
+            listViewPodd.Size = new Size(197, 346);
+            listViewPodd.TabIndex = 27;
+            listViewPodd.UseCompatibleStateImageBehavior = false;
+            listViewPodd.View = View.Details;
+            listViewPodd.SelectedIndexChanged += listViewPodd_SelectedIndexChanged_1;
+            // 
+            // columnNamn
+            // 
+            columnNamn.Text = "Namn";
+            columnNamn.Width = 100;
+            // 
+            // columnKategori
+            // 
+            columnKategori.Text = "Kategori";
+            columnKategori.Width = 100;
             // 
             // PoddcastVisare
             // 
@@ -302,6 +305,7 @@ namespace PoddGrupp
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LemonChiffon;
             ClientSize = new Size(1292, 630);
+            Controls.Add(listViewPodd);
             Controls.Add(lblNamnPaKategori);
             Controls.Add(comboBox1);
             Controls.Add(btnAterstall);
@@ -314,7 +318,6 @@ namespace PoddGrupp
             Controls.Add(btnLaggTillKategori);
             Controls.Add(lblKategorier);
             Controls.Add(listaKategorier);
-            Controls.Add(listaFloden);
             Controls.Add(btnTaBort);
             Controls.Add(btnAndra);
             Controls.Add(btnLaggTill);
@@ -325,7 +328,7 @@ namespace PoddGrupp
             Controls.Add(lblNamnPaFlodet);
             Controls.Add(tbNamn);
             Controls.Add(lblPoddcast);
-            Margin = new Padding(2, 2, 2, 2);
+            Margin = new Padding(2);
             Name = "PoddcastVisare";
             Text = "Poddcast";
             Load += PoddcastVisare_Load;
@@ -345,7 +348,6 @@ namespace PoddGrupp
         private System.Windows.Forms.Button btnLaggTill;
         private System.Windows.Forms.Button btnAndra;
         private System.Windows.Forms.Button btnTaBort;
-        private System.Windows.Forms.ListBox listaFloden;
         private System.Windows.Forms.Label lblKategorier;
         private System.Windows.Forms.ListBox listaKategorier;
         private System.Windows.Forms.Button btnTaBortKategori;
@@ -358,6 +360,9 @@ namespace PoddGrupp
         private System.Windows.Forms.Button btnAterstall;
         private System.Windows.Forms.ComboBox comboBox1;
         private Label lblNamnPaKategori;
+        private ListView listViewPodd;
+        private ColumnHeader columnNamn;
+        private ColumnHeader columnKategori;
     }
 }
 

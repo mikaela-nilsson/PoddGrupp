@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DL.Interfaces
+namespace DL
 {
-    internal interface IRepository
+    public interface IRepository<T>
     {
-        public void laggTill();
-        public void taBort();
-        public void andraUppgift();
+        public void LaggTill(T item);
+        public void TaBort(string item);
+        public void AndraUppgifter(T item);
+        IEnumerable<T> HamtaAlla();
 
     }
 }

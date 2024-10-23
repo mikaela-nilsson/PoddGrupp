@@ -18,76 +18,40 @@ namespace BL
 
 
         //Hämtar alla poddcast från repository
-        public List<Poddcast> HämtaAllaPoddcast()
+        public List<Poddcast> HamtaAllaPoddcast()
         {
-            return poddRepository.HämtaAllaPoddcast();
+            return poddRepository.HamtaAlla();
         }
+        
 
 
         //Hämtar och sparar poddcast från RSS-flöde till repository 
-        public void HämtaPoddcastInformation(string rssLank)
+        public void HamtaPoddcastInformation(string rssLank)
         {
-            XmlReader minXMLlasare = XmlReader.Create(rssLank);
-            SyndicationFeed poddcastFlode = SyndicationFeed.Load(minXMLlasare);
-
-            foreach (SyndicationItem item in poddcastFlode.Items)
-            {
-                var avsnittTitel = item.Title.Text;  // Avsnittets titel
-                Poddcast enPoddcast = new Poddcast
-                {
-                    Id = item.Id.ToString(),
-                    Namn = item.Authors.FirstOrDefault()?.Name ?? item.Title.Text,  // Använd titeln om författaren saknas
-                    Titel = item.Title.Text,
-                    Kategori = item.Categories.FirstOrDefault()?.Label ?? "Okänd kategori",
-                    AntalAvsnitt = poddcastFlode.Items.Count(),  // Räkna antal objekt i RSS-flödet
-                    RSS = rssLank,
-                    Avsnitt = poddcastFlode.Items.Select(i => i.Title.Text).ToList()  // Lägger till alla avsnittstitlar
-                };
-               
-                poddRepository.LäggTillPoddcast(enPoddcast);  // Spara podcasten
-            } 
+            HamtaPoddcastInformation(rssLank);
         }
 
 
         // Denna metod hämtar titlar på podcastavsnitt från ett angivet RSS-flöde och returnerar dem som en lista, eller kastar ett undantag vid fel.
-        public List<string> HämtaPoddcastAvsnitt(string rssLank)
+        public List<string> HamtaPoddcastAvsnitt(string rssLank)
         {
-            try
-            {
-                XmlReaderSettings settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
-
-                using (XmlReader minXMLlasare = XmlReader.Create(rssLank, settings))
-                {
-                    SyndicationFeed poddcastFlode = SyndicationFeed.Load(minXMLlasare);
-
-                    if (poddcastFlode == null || !poddcastFlode.Items.Any())
-                    {
-                        throw new Exception("RSS-flödet är ogiltigt eller innehåller inga avsnitt.");
-                    }
-
-                    List<string> avsnittTitlar = poddcastFlode.Items.Select(item => item.Title.Text).ToList();
-
-                    return avsnittTitlar;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Fel vid hämtning av RSS-flöde: {ex.Message}");
-            }
+            return poddRepository.HamtaAvsnitt(rssLank);
+                
+                
         }
 
-
+        //HamtaAvsnittBeskrivning, anropar här
 
 
         //Här valideras om angivna RSS-länken och/eller flödets namn redan finns
         public (bool isValid, string meddelande) ValideraNyFlode(string rssLank, string namn)
         {
-            if (poddRepository.HämtaAllaPoddcast().Any(f => f.Namn == namn))
+            if (poddRepository.HamtaAlla().Any(f => f.Namn == namn))
             {
                 return (false, "Flöde med detta namn finns redan. Vänligen välj ett nytt namn.");
             }
 
-            if (poddRepository.HämtaAllaPoddcast().Any(f => f.RSS == rssLank))
+            if (poddRepository.HamtaAlla().Any(f => f.RSS == rssLank))
             {
                 return (false, "Flöde med denna RSS-länk finns redan. Vänligen välj ett nytt länk.");
             }
@@ -104,7 +68,7 @@ namespace BL
             var resultat = ValideraNyFlode(rssLank, namn);
             if (!resultat.isValid) throw new ArgumentException(resultat.meddelande);
 
-            List<string> avsnitt = HämtaPoddcastAvsnitt(rssLank); 
+            List<string> avsnitt = HamtaPoddcastAvsnitt(rssLank); 
 
             var nyttFlode = new Poddcast
             {
@@ -114,12 +78,12 @@ namespace BL
                 Avsnitt = avsnitt 
             };
 
-            poddRepository.LäggTillPoddcast(nyttFlode);
+            poddRepository.LaggTill(nyttFlode);
         }
 
         public void TaBortFlode (string namn)
         {
-            poddRepository.TaBortPodd(namn);
+            poddRepository.TaBort(namn);
         }
 
     }
