@@ -31,6 +31,13 @@ namespace BL
             HamtaPoddcastInformation(rssLank);
         }
 
+        //!!!!OBS!!! DETTA ÄR ETT EXEMPEL PÅ EN METODÖVERLAGRING(FYLLER INGEN FUNKTION-- BARA EXEMPEL :D)
+        public void HamtaPoddcastInformation(string rssLank, string namn)
+        {
+            HamtaPoddcastInformation(rssLank);
+            Console.Write(namn);
+        }
+
 
         // Denna metod hämtar titlar på podcastavsnitt från ett angivet RSS-flöde och returnerar dem som en lista, eller kastar ett undantag vid fel.
         public List<string> HamtaPoddcastAvsnitt(string rssLank)
