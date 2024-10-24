@@ -36,11 +36,13 @@ namespace BL
         public List<string> HamtaPoddcastAvsnitt(string rssLank)
         {
             return poddRepository.HamtaAvsnitt(rssLank);
-                
-                
+
         }
 
-        //HamtaAvsnittBeskrivning, anropar här
+        public List<string> HamtaAvsnittBeskrivning(string rssLank)
+        {
+            return poddRepository.HamtaAvsnittsBeskrivningar(rssLank);
+        }
 
 
         //Här valideras om angivna RSS-länken och/eller flödets namn redan finns
@@ -68,14 +70,14 @@ namespace BL
             var resultat = ValideraNyFlode(rssLank, namn);
             if (!resultat.isValid) throw new ArgumentException(resultat.meddelande);
 
-            List<string> avsnitt = HamtaPoddcastAvsnitt(rssLank); 
+            List<string> avsnitt = HamtaPoddcastAvsnitt(rssLank);
 
             var nyttFlode = new Poddcast
             {
                 RSS = rssLank,
                 Namn = namn,
                 Kategori = kategori,
-                Avsnitt = avsnitt 
+                Avsnitt = avsnitt
             };
 
             poddRepository.LaggTill(nyttFlode);

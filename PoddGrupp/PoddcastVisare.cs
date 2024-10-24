@@ -16,6 +16,7 @@ namespace PoddGrupp
     {
 
         private PoddcastController poddcastController;
+        private List<Poddcast> poddcastLista = new List<Poddcast>(); // Lista som håller alla poddavsnitt
 
         public PoddcastVisare()
         {
@@ -28,6 +29,7 @@ namespace PoddGrupp
         private void PoddcastVisare_Load(object sender, EventArgs e)
         {
             FyllFlodeLista();
+            listaAvsnitt.SelectedIndexChanged += listaAvsnitt_SelectedIndexChanged;
         }
 
         //Hämtar och visar namnen på alla podcast i en lista i användargränssnittet
@@ -46,9 +48,27 @@ namespace PoddGrupp
                 .ToArray());
         }
 
-        //Metoden lägger till en ny podcast genom att läsa den inmatade RSS-länken, namn och kategori
-        //och lägger därefter till flödet via controller. Därefter hämtar den avsnitten från poddcastflödet
-        //och visar dem i listan över avsnitt. Fungerar det så poppar meddelande upp. 
+        
+
+        private void listaAvsnitt_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Kontrollera att ett avsnitt är valt och att det finns poddcastobjekt
+            if (listaAvsnitt.SelectedIndex >= 0 && listViewPodd.SelectedItems.Count > 0)
+            {
+                // Hämta den valda poddcasten
+                int valtPoddcastIndex = listViewPodd.SelectedItems[0].Index;
+                Poddcast valdPoddcast = poddcastLista[valtPoddcastIndex];
+
+                // Hämta det valda avsnittets index
+                int valtAvsnittsIndex = listaAvsnitt.SelectedIndex;
+
+                // Visa rätt beskrivning för det valda avsnittet
+                beskrivningAvsnitt.Clear();
+                beskrivningAvsnitt.AppendText(valdPoddcast.AvsnittBeskrivning[valtAvsnittsIndex]);
+            }
+        }
+
+        //Denna metod lägger till poddcast i listan, hämtar avsnitt som tillhör den podcast du klickar på och hämtar beskrivning för det avsnitt som användaren klickar på. 
         private void btnLaggTill_Click(object sender, EventArgs e)
         {
             string rssUrl = tbRSS.Text;
@@ -57,28 +77,44 @@ namespace PoddGrupp
 
             try
             {
+                // Lägg till poddcasten i systemet
                 poddcastController.LaggTillFlode(rssUrl, namn, kategori);
 
-                FyllFlodeLista();
+                // Hämta avsnitt och deras beskrivningar
+                List<string> avsnittTitlar = poddcastController.HamtaPoddcastAvsnitt(rssUrl);
+                List<string> avsnittBeskrivningar = poddcastController.HamtaAvsnittBeskrivning(rssUrl);
 
-                List<string> avsnitten = poddcastController.HamtaPoddcastAvsnitt(rssUrl);
-
-                listaAvsnitt.Items.Clear();
-                foreach (var avsnitt in avsnitten)
+                // Skapa ett nytt Poddcast-objekt och lägg till det i listan
+                Poddcast nyPoddcast = new Poddcast
                 {
-                    listaAvsnitt.Items.Add(avsnitt);
-                }
+                    Namn = namn,
+                    Kategori = kategori,
+                    RSS = rssUrl,
+                    Avsnitt = avsnittTitlar,
+                    AvsnittBeskrivning = avsnittBeskrivningar
+                };
 
-                MessageBox.Show("Flödet har lagts till och avsnitten har hämtats!");
+                poddcastLista.Add(nyPoddcast); // Lägg till poddcast i listan
+
+                // Lägg till poddcastens namn i ListViewPodd
+                ListViewItem item = new ListViewItem(nyPoddcast.Namn);
+                item.SubItems.Add(nyPoddcast.Kategori);
+                item.SubItems.Add(nyPoddcast.RSS);
+                listViewPodd.Items.Add(item);
+
+                MessageBox.Show("Poddcasten har lagts till!");
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show($"Ett fel inträffade: {ex.Message}");
             }
 
+            // Rensa textfälten
             tbRSS.Text = "";
             tbNamn.Text = "";
         }
+
+
 
         private void btnTaBort_Click(object sender, EventArgs e)
         {

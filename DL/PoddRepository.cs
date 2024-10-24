@@ -12,11 +12,7 @@ namespace DL
 {
     public class PoddRepository : IRepository<Poddcast>
     {
-
-
         private List<Poddcast> poddcastLista = new List<Poddcast>();
-
-
 
         public void LaggTill(Poddcast poddcast)
         {
@@ -63,35 +59,8 @@ namespace DL
         }
 
 
-        //Hämtar och sparar poddcast från RSS-flöde till repository 
-        public void HamtaPoddcastInformation(string rssLank)
-        {
-            XmlReader minXMLlasare = XmlReader.Create(rssLank);
-            SyndicationFeed poddcastFlode = SyndicationFeed.Load(minXMLlasare);
-
-            foreach (SyndicationItem item in poddcastFlode.Items)
-            {
-                var avsnittTitel = item.Title.Text;  // Avsnittets titel
-                Poddcast enPoddcast = new Poddcast
-                {
-                    //   Id = item.Id.ToString(),
-                    Namn = item.Authors.FirstOrDefault()?.Name ?? item.Title.Text,  // Använd titeln om författaren saknas
-                                                                                    // Titel = item.Title.Text,
-                    Kategori = item.Categories.FirstOrDefault()?.Label ?? "Okategoriserad",
-                    // AntalAvsnitt = poddcastFlode.Items.Count(),  // Räkna antal objekt i RSS-flödet
-                    RSS = rssLank,
-                    Avsnitt = poddcastFlode.Items.Select(i => i.Title.Text).ToList()  // Lägger till alla avsnittstitlar
-                };
-
-                LaggTill(enPoddcast);
-            }
-        }
-
-
-
         //Denna hämtar avsnitt som tillhör specifik poddcast
-        public List <string> HamtaAvsnitt(string rssLank)
-            
+        public List<string> HamtaAvsnitt(string rssLank)
         {
             try
             {
@@ -104,11 +73,50 @@ namespace DL
                     if (poddcastFlode == null || !poddcastFlode.Items.Any())
                     {
                         throw new Exception("RSS-flödet är ogiltigt eller innehåller inga avsnitt.");
-}
+                    }
 
-    List<string> avsnittTitlar = poddcastFlode.Items.Select(item => item.Title.Text).ToList();
+                    List<string> avsnittTitlar = poddcastFlode.Items.Select(item => item.Title.Text).ToList();
 
-    return avsnittTitlar;
+                    return avsnittTitlar;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Fel vid hämtning av RSS-flöde: {ex.Message}");
+            }
+        }
+
+
+        public List<string> HamtaAvsnittsBeskrivningar(string rssLank)
+        {
+            try
+            {
+                XmlReaderSettings settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+
+                using (XmlReader minXMLlasare = XmlReader.Create(rssLank, settings))
+                {
+                    SyndicationFeed poddcastFlode = SyndicationFeed.Load(minXMLlasare);
+
+                    if (poddcastFlode == null || !poddcastFlode.Items.Any())
+                    {
+                        throw new Exception("RSS-flödet är ogiltigt eller innehåller inga avsnitt.");
+                    }
+
+                    // Skapa en lista för beskrivningar
+                    List<string> avsnittBeskrivningar = new List<string>();
+
+                    foreach (var item in poddcastFlode.Items)
+                    {
+                        // Hämta beskrivningen från olika källor utan purl
+                        string beskrivning = item.Summary?.Text
+                                             ?? (item.Content is TextSyndicationContent textContent ? textContent.Text : null)
+                                             ?? "Ingen beskrivning tillgänglig";
+
+                        // Lägg till beskrivningen i listan
+                        avsnittBeskrivningar.Add(beskrivning);
+                    }
+
+                    return avsnittBeskrivningar;
                 }
             }
             catch (Exception ex)
@@ -117,11 +125,8 @@ namespace DL
             }
         }
     }
-
-
-    //HamtaAvsnittBeskrivning
-
-
-
 }
+        
+
+    
 
