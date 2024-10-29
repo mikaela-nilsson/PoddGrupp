@@ -53,5 +53,25 @@ namespace DL
         {
             return kategoriLista.Any(k => k.Namn == kategoriNamn);
         }
+    
+
+    public void Redigera(string gammaltNamn, string nyttNamn)
+    {
+        Kategori kategori = kategoriLista.FirstOrDefault(k => k.Namn == gammaltNamn);
+        if (kategori == null)
+        {
+            throw new ArgumentException("Kategorin finns inte.");
+        }
+
+        // Kontrollera att den nya kategorin inte redan finns
+        if (KategoriFinns(nyttNamn))
+        {
+            throw new ArgumentException("Den nya kategorin finns redan.");
+        }
+
+        kategori.Namn = nyttNamn;
+        // Lägg till logik för att spara ändringar i databas eller fil
     }
 }
+}
+

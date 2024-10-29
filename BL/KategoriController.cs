@@ -1,4 +1,5 @@
-﻿using DL;
+﻿using BL;
+using DL;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -29,5 +30,17 @@ namespace BL
             //Om valideringen gick bra tas kategorin bort genom metoden i KategoriRepository klassen
             kategoriRepository.TaBort(kategoriNamn);
         }
+    
+
+
+    public void RedigeraKategori(string gammaltNamn, string nyttNamn)
+    {
+       
+
+        // Ändra kategorin via repository
+        kategoriRepository.Redigera(gammaltNamn, nyttNamn);
     }
 }
+
+}
+  

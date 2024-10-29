@@ -37,6 +37,11 @@ namespace PoddGrupp
             FyllKategoriLista(cbKategori);
             FyllKategoriLista(listaKategorier);
             cbKategori.SelectedIndex = 0;
+
+            cbAndra.Items.Add("Ändra namn");
+            cbAndra.Items.Add("Ändra kategori");
+            cbAndra.SelectedIndex = 0; // Sätt standardval
+
             listaAvsnitt.SelectedIndexChanged += listaAvsnitt_SelectedIndexChanged;
         }
 
@@ -227,54 +232,87 @@ namespace PoddGrupp
                     tbNamnKategori.Text = "";
                 }
         }
-    
 
-    private void btnAndra_Click(object sender, EventArgs e)
-    {
-        // Kontrollera att en poddcast är vald
-        if (listViewPodd.SelectedItems.Count == 0)
+
+        private void btnAndra_Click(object sender, EventArgs e)
+
         {
-            MessageBox.Show("Vänligen välj en poddcast från listan.");
-            return;
+
+            // Kontrollera att en poddcast är vald
+            if (listViewPodd.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Vänligen välj en poddcast från listan.");
+                return;
+            }
+            string val = cbAndra.SelectedItem.ToString();
+
+            if ( val == "Ändra kategori")
+            {
+                string gammaltKategoriNamn = listViewPodd.SelectedItems[0].SubItems[1].Text; // Kategori är på index 1
+               
+                string nyKategori = cbKategori.SelectedItem.ToString();
+
+                try
+                {
+                    // Kalla på metoden för att ändra kategorin
+                    kategoriController.RedigeraKategori(gammaltKategoriNamn, nyKategori);
+                    MessageBox.Show("Kategorin har ändrats.");
+
+                    // Uppdatera listan för att visa den nya kategorin
+                    FyllFlodeLista();
+                }
+                catch (ArgumentException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ett fel inträffade: {ex.Message}");
+                }
+            } 
+             else if (val == "Ändra namn")
+
+            {            // Hämta det gamla namnet från den valda poddcasten
+                string gammaltNamn = listViewPodd.SelectedItems[0].SubItems[0].Text;
+                string nyttNamn = tbNamn.Text; // Använd textboxen för det nya namnet
+
+                if (string.IsNullOrWhiteSpace(nyttNamn))
+                {
+                    MessageBox.Show("Nytt namn kan inte vara tomt.");
+                    return;
+                }
+
+                try
+                {
+                    // Kalla på metoden för att ändra namnet
+                    poddcastController.RedigeraFlodeNamn(gammaltNamn, nyttNamn);
+                    MessageBox.Show("Poddcastnamn har ändrats.");
+
+                    // Uppdatera listan för att visa det nya namnet
+                    FyllFlodeLista();
+                }
+                catch (ArgumentException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ett fel inträffade: {ex.Message}");
+                }
+            }
         }
 
-        // Hämta det gamla namnet från den valda poddcasten
-        string gammaltNamn = listViewPodd.SelectedItems[0].SubItems[0].Text;
-        string nyttNamn = tbNamn.Text; // Använd textboxen för det nya namnet
-
-        if (string.IsNullOrWhiteSpace(nyttNamn))
-        {
-            MessageBox.Show("Nytt namn kan inte vara tomt.");
-            return;
-        }
-
-        try
-        {
-            // Kalla på metoden för att ändra namnet
-            poddcastController.RedigeraFlodeNamn(gammaltNamn, nyttNamn);
-            MessageBox.Show("Poddcastnamn har ändrats.");
-
-            // Uppdatera listan för att visa det nya namnet
-            FyllFlodeLista();
-        }
-        catch (ArgumentException ex)
-        {
-            MessageBox.Show(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Ett fel inträffade: {ex.Message}");
-        }
-    }
 
 
     private void PoddcastVisare_FormClosing(object sender, FormClosingEventArgs e)
     {
         poddcastController.SparaData();
-    }
 }
-  }
-  
+}
+}
+
+
+
 
 
 
