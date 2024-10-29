@@ -17,11 +17,13 @@ namespace PoddGrupp
 
         private PoddcastController poddcastController;
         private List<Poddcast> poddcastLista = new List<Poddcast>(); // Lista som håller alla poddavsnitt
+        private KategoriController kategoriController;
 
         public PoddcastVisare()
         {
             InitializeComponent();
             poddcastController = new PoddcastController();
+            kategoriController = new KategoriController();
         }
 
         //Metod som körs när formuläret laddas. Den anropar en annan metod (FyllFlodeLista) för att fylla 
@@ -29,6 +31,9 @@ namespace PoddGrupp
         private void PoddcastVisare_Load(object sender, EventArgs e)
         {
             FyllFlodeLista();
+            FyllKategoriLista(cbKategori);
+            FyllKategoriLista(listaKategorier);
+            cbKategori.SelectedIndex = 0;
             listaAvsnitt.SelectedIndexChanged += listaAvsnitt_SelectedIndexChanged;
         }
 
@@ -48,7 +53,17 @@ namespace PoddGrupp
                 .ToArray());
         }
 
-        
+        //Hämtar och visar namnen på alla kategorier i listan och comboboxen
+        private void FyllKategoriLista(dynamic listaNamn)
+        {
+            //Rensar comboboxen eller listan för kategorier
+            listaNamn.Items.Clear();
+
+            var allaKategorier = kategoriController.HamtaAllaKategorier();
+
+            listaNamn.Items.AddRange(allaKategorier.Select(kategori => kategori.Namn).ToArray());
+        }
+
 
         private void listaAvsnitt_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -171,6 +186,43 @@ namespace PoddGrupp
                     MessageBox.Show("Kunde inte hitta den valda podcasten.");
                 }
             }
+        }
+
+        private void btnTaBortKategori_Click(object sender, EventArgs e)
+        {
+                //Kontroller att man har valt en kategori i listan
+                if (listaKategorier.SelectedItem == null)
+                {
+                    MessageBox.Show("Vänligen välj en kategori från listan till höger");
+                    return;
+                }
+
+                string kategoriNamn = listaKategorier.SelectedItem.ToString();
+
+                DialogResult result = MessageBox.Show("Är du säker på att du vill ta bort " + kategoriNamn + "?", "Bekräftelse", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        kategoriController.TaBortKategori(kategoriNamn);
+                        MessageBox.Show("Kategorin har tagits bort"); //" och flöden har flyttats till 'Okategoriserad'."
+
+                        FyllKategoriLista(cbKategori);
+                        FyllKategoriLista(listaKategorier);
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+
+                    // Rensa textfältet
+                    tbNamnKategori.Text = "";
+                }
         }
     }
 }

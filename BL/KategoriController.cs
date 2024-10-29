@@ -1,4 +1,5 @@
 ﻿using DL;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,10 @@ namespace BL
         public KategoriController()
         {
             kategoriRepository = new KategoriRepository();
+        }
+        public IEnumerable<Kategori> HamtaAllaKategorier()
+        {
+            return kategoriRepository.HamtaAlla();
         }
 
         public void TaBortKategori(string kategoriNamn)
