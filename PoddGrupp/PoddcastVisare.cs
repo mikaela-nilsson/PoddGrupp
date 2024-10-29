@@ -16,19 +16,14 @@ namespace PoddGrupp
     {
 
         private PoddcastController poddcastController;
-      
-
         private List<Poddcast> poddcastLista = new List<Poddcast>(); // Lista som håller alla poddavsnitt
+        private KategoriController kategoriController;
 
         public PoddcastVisare()
         {
             InitializeComponent();
             poddcastController = new PoddcastController();
-           
-
-
-             btnAndra.Click += btnAndra_Click;
-         
+            kategoriController = new KategoriController();
         }
 
         //Metod som körs när formuläret laddas. Den anropar en annan metod (FyllFlodeLista) för att fylla 
@@ -36,7 +31,9 @@ namespace PoddGrupp
         private void PoddcastVisare_Load(object sender, EventArgs e)
         {
             FyllFlodeLista();
-           
+            FyllKategoriLista(cbKategori);
+            FyllKategoriLista(listaKategorier);
+            cbKategori.SelectedIndex = 0;
             listaAvsnitt.SelectedIndexChanged += listaAvsnitt_SelectedIndexChanged;
         }
 
@@ -56,7 +53,17 @@ namespace PoddGrupp
                 .ToArray());
         }
 
-        
+        //Hämtar och visar namnen på alla kategorier i listan och comboboxen
+        private void FyllKategoriLista(dynamic listaNamn)
+        {
+            //Rensar comboboxen eller listan för kategorier
+            listaNamn.Items.Clear();
+
+            var allaKategorier = kategoriController.HamtaAllaKategorier();
+
+            listaNamn.Items.AddRange(allaKategorier.Select(kategori => kategori.Namn).ToArray());
+        }
+
 
         private void listaAvsnitt_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -181,67 +188,41 @@ namespace PoddGrupp
             }
         }
 
-
-
-
-        private void btnAndra_Click(object sender, EventArgs e)
+        private void btnTaBortKategori_Click(object sender, EventArgs e)
         {
-            // Kontrollera att en poddcast är vald
-            if (listViewPodd.SelectedItems.Count == 0)
-            {
-                MessageBox.Show("Vänligen välj en poddcast från listan.");
-                return;
-            }
+                //Kontroller att man har valt en kategori i listan
+                if (listaKategorier.SelectedItem == null)
+                {
+                    MessageBox.Show("Vänligen välj en kategori från listan till höger");
+                    return;
+                }
 
-            // Hämta det gamla namnet från den valda poddcasten
-            string gammaltNamn = listViewPodd.SelectedItems[0].SubItems[0].Text;
-            string nyttNamn = tbNamn.Text; // Använd textboxen för det nya namnet
+                string kategoriNamn = listaKategorier.SelectedItem.ToString();
 
-            if (string.IsNullOrWhiteSpace(nyttNamn))
-            {
-                MessageBox.Show("Nytt namn kan inte vara tomt.");
-                return;
-            }
+                DialogResult result = MessageBox.Show("Är du säker på att du vill ta bort " + kategoriNamn + "?", "Bekräftelse", MessageBoxButtons.YesNo);
 
-            try
-            {
-                // Kalla på metoden för att ändra namnet
-                poddcastController.RedigeraFlodeNamn(gammaltNamn, nyttNamn);
-                MessageBox.Show("Poddcastnamn har ändrats.");
+                if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        kategoriController.TaBortKategori(kategoriNamn);
+                        MessageBox.Show("Kategorin har tagits bort"); //" och flöden har flyttats till 'Okategoriserad'."
 
-                // Uppdatera listan för att visa det nya namnet
-                FyllFlodeLista();
-            }
-            catch (ArgumentException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ett fel inträffade: {ex.Message}");
-            }
+                        FyllKategoriLista(cbKategori);
+                        FyllKategoriLista(listaKategorier);
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+
+                    // Rensa textfältet
+                    tbNamnKategori.Text = "";
+                }
         }
     }
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
