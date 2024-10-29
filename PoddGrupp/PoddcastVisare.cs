@@ -25,6 +25,8 @@ namespace PoddGrupp
             poddcastController = new PoddcastController();
             kategoriController = new KategoriController();
             btnAndra.Click += btnAndra_Click;
+            this.FormClosing += new FormClosingEventHandler(PoddcastVisare_FormClosing);
+
         }
 
         //Metod som körs när formuläret laddas. Den anropar en annan metod (FyllFlodeLista) för att fylla 
@@ -264,9 +266,15 @@ namespace PoddGrupp
             MessageBox.Show($"Ett fel inträffade: {ex.Message}");
         }
     }
-}
 
 
+    private void PoddcastVisare_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        poddcastController.SparaData();
+    }
 }
+  }
+  
+
 
 

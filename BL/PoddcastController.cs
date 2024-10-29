@@ -13,7 +13,21 @@ namespace BL
         public PoddcastController()
         {
             poddRepository = new PoddRepository();
+             LaddaPoddcastData();
         }
+
+
+        public void SparaData()
+        {
+            poddRepository.SparaDataTillXml("data.xml");
+        }
+
+        public void LaddaPoddcastData()
+        {
+            poddRepository.LaddaDataFranXml("data.xml");
+        }
+
+
 
         // Hämtar alla poddcast från repository
         public List<Poddcast> HamtaAllaPoddcast()

@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.ServiceModel.Syndication;
+using System.Xml.Serialization;
+using System.IO;
 
 
 namespace DL
@@ -34,6 +36,29 @@ namespace DL
                 poddcastLista.Remove(poddcast);
             }
         }
+
+        public void SparaDataTillXml(string filnamn)
+        {
+            var serializer = new XmlSerializer(typeof(List<Poddcast>));
+            using (var writer = new StreamWriter(filnamn))
+            {
+                serializer.Serialize(writer, poddcastLista);
+            }
+        }
+
+        public void LaddaDataFranXml(string filnamn)
+        {
+            if (File.Exists(filnamn))
+            {
+                var serializer = new XmlSerializer(typeof(List<Poddcast>));
+                using (var reader = new StreamReader(filnamn))
+                {
+                    poddcastLista = (List<Poddcast>)serializer.Deserialize(reader);
+                }
+            }
+        }
+
+
 
         public void AndraUppgifter(Poddcast uppdateradPodd)
         {
@@ -142,9 +167,12 @@ public void RedigeraFlodeNamn(string gammaltNamn, string nyttNamn)
     {
         throw new ArgumentException("Poddcast med det angivna namnet hittades inte.");
     }
-}
+
+        }
     }
 }
+
+
 
 
 
