@@ -16,12 +16,19 @@ namespace PoddGrupp
     {
 
         private PoddcastController poddcastController;
+      
+
         private List<Poddcast> poddcastLista = new List<Poddcast>(); // Lista som håller alla poddavsnitt
 
         public PoddcastVisare()
         {
             InitializeComponent();
             poddcastController = new PoddcastController();
+           
+
+
+             btnAndra.Click += btnAndra_Click;
+         
         }
 
         //Metod som körs när formuläret laddas. Den anropar en annan metod (FyllFlodeLista) för att fylla 
@@ -29,6 +36,7 @@ namespace PoddGrupp
         private void PoddcastVisare_Load(object sender, EventArgs e)
         {
             FyllFlodeLista();
+           
             listaAvsnitt.SelectedIndexChanged += listaAvsnitt_SelectedIndexChanged;
         }
 
@@ -172,5 +180,68 @@ namespace PoddGrupp
                 }
             }
         }
+
+
+
+
+        private void btnAndra_Click(object sender, EventArgs e)
+        {
+            // Kontrollera att en poddcast är vald
+            if (listViewPodd.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Vänligen välj en poddcast från listan.");
+                return;
+            }
+
+            // Hämta det gamla namnet från den valda poddcasten
+            string gammaltNamn = listViewPodd.SelectedItems[0].SubItems[0].Text;
+            string nyttNamn = tbNamn.Text; // Använd textboxen för det nya namnet
+
+            if (string.IsNullOrWhiteSpace(nyttNamn))
+            {
+                MessageBox.Show("Nytt namn kan inte vara tomt.");
+                return;
+            }
+
+            try
+            {
+                // Kalla på metoden för att ändra namnet
+                poddcastController.RedigeraFlodeNamn(gammaltNamn, nyttNamn);
+                MessageBox.Show("Poddcastnamn har ändrats.");
+
+                // Uppdatera listan för att visa det nya namnet
+                FyllFlodeLista();
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ett fel inträffade: {ex.Message}");
+            }
+        }
     }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

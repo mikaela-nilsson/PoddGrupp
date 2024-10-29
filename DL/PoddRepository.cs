@@ -124,9 +124,28 @@ namespace DL
                 throw new Exception($"Fel vid hämtning av RSS-flöde: {ex.Message}");
             }
         }
+    
+
+
+
+
+
+
+public void RedigeraFlodeNamn(string gammaltNamn, string nyttNamn)
+{
+    var befintligPodd = poddcastLista.FirstOrDefault(f => f.Namn == gammaltNamn);
+    if (befintligPodd != null)
+    {
+        befintligPodd.Namn = nyttNamn;
+    }
+    else
+    {
+        throw new ArgumentException("Poddcast med det angivna namnet hittades inte.");
     }
 }
-        
+    }
+}
 
-    
+
+
 

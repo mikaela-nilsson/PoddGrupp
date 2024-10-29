@@ -10,40 +10,34 @@ namespace BL
     {
         private PoddRepository poddRepository;
 
-
         public PoddcastController()
         {
             poddRepository = new PoddRepository();
         }
 
-
-        //Hämtar alla poddcast från repository
+        // Hämtar alla poddcast från repository
         public List<Poddcast> HamtaAllaPoddcast()
         {
             return poddRepository.HamtaAlla();
         }
-        
 
-
-        //Hämtar och sparar poddcast från RSS-flöde till repository 
+        // Hämtar och sparar poddcast från RSS-flöde till repository 
         public void HamtaPoddcastInformation(string rssLank)
         {
             HamtaPoddcastInformation(rssLank);
         }
 
-        //!!!!OBS!!! DETTA ÄR ETT EXEMPEL PÅ EN METODÖVERLAGRING(FYLLER INGEN FUNKTION-- BARA EXEMPEL :D)
+        //!!!!OBS!!! DETTA ÄR ETT EXEMPEL PÅ EN METODÖVERLAGRING (FYLLER INGEN FUNKTION-- BARA EXEMPEL :D)
         public void HamtaPoddcastInformation(string rssLank, string namn)
         {
             HamtaPoddcastInformation(rssLank);
             Console.Write(namn);
         }
 
-
         // Denna metod hämtar titlar på podcastavsnitt från ett angivet RSS-flöde och returnerar dem som en lista, eller kastar ett undantag vid fel.
         public List<string> HamtaPoddcastAvsnitt(string rssLank)
         {
             return poddRepository.HamtaAvsnitt(rssLank);
-
         }
 
         public List<string> HamtaAvsnittBeskrivning(string rssLank)
@@ -51,8 +45,7 @@ namespace BL
             return poddRepository.HamtaAvsnittsBeskrivningar(rssLank);
         }
 
-
-        //Här valideras om angivna RSS-länken och/eller flödets namn redan finns
+        // Här valideras om angivna RSS-länken och/eller flödets namn redan finns
         public (bool isValid, string meddelande) ValideraNyFlode(string rssLank, string namn)
         {
             if (poddRepository.HamtaAlla().Any(f => f.Namn == namn))
@@ -65,7 +58,7 @@ namespace BL
                 return (false, "Flöde med denna RSS-länk finns redan. Vänligen välj ett nytt länk.");
             }
 
-            //Om valideringen lyckades
+            // Om valideringen lyckades
             return (true, string.Empty);
         }
 
@@ -90,10 +83,20 @@ namespace BL
             poddRepository.LaggTill(nyttFlode);
         }
 
-        public void TaBortFlode (string namn)
+        public void TaBortFlode(string namn)
         {
             poddRepository.TaBort(namn);
         }
 
+        // Ny metod för att redigera flödesnamn
+        public void RedigeraFlodeNamn(string gammaltNamn, string nyttNamn)
+        {
+            if (string.IsNullOrWhiteSpace(gammaltNamn))
+                throw new ArgumentException("Gammalt namn kan inte vara tomt.");
+            if (string.IsNullOrWhiteSpace(nyttNamn))
+                throw new ArgumentException("Nytt namn kan inte vara tomt.");
+
+            poddRepository.RedigeraFlodeNamn(gammaltNamn, nyttNamn);
+        }
     }
 }
