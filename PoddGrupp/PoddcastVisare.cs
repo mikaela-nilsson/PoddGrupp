@@ -342,8 +342,53 @@ namespace PoddGrupp
                 MessageBox.Show("Kategorinamn kan inte vara tomt."); // Kontrollera om textfältet är tomt
             }
         }
+
+        private void btnAndraKategori_Click(object sender, EventArgs e)
+        {
+            // Kontrollera att en kategori är vald
+            if (listaKategorier.SelectedItem == null)
+            {
+                MessageBox.Show("Vänligen välj en kategori från listan.");
+                return;
+            }
+
+            // Hämta den valda kategorin
+            string gammaltKategoriNamn = listaKategorier.SelectedItem.ToString();
+
+            // Hämta det nya namnet från en TextBox
+            string nyttKategoriNamn = tbNamnKategori.Text.Trim(); // Anta att tbNamnKategori är TextBoxen
+
+            if (string.IsNullOrWhiteSpace(nyttKategoriNamn))
+            {
+                MessageBox.Show("Nytt namn kan inte vara tomt.");
+                return;
+            }
+
+            try
+            {
+                // Anropa metoden för att ändra namnet
+                kategoriController.RedigeraKategori(gammaltKategoriNamn, nyttKategoriNamn);
+
+                // Uppdatera listan för att visa det nya namnet
+                FyllKategoriLista(listaKategorier);
+
+                MessageBox.Show("Kategorin har ändrats.");
+
+                // Rensa TextBoxen
+                tbNamnKategori.Clear();
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ett fel inträffade: {ex.Message}");
+            }
+        }
     }
 }
+
 
 
 
