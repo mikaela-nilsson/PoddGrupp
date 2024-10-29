@@ -30,10 +30,26 @@ namespace BL
             //Om valideringen gick bra tas kategorin bort genom metoden i KategoriRepository klassen
             kategoriRepository.TaBort(kategoriNamn);
         }
-    
+        // Lägg till en ny kategori
+        public void LaggTillKategori(string kategoriNamn)
+        {
+            if (string.IsNullOrWhiteSpace(kategoriNamn))
+            {
+                throw new ArgumentException("Kategorinamn kan inte vara tomt.");
+            }
 
+            // Kontrollera om kategorin redan finns
+            if (kategoriRepository.HamtaAlla().Any(k => k.Namn.Equals(kategoriNamn, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new ArgumentException("Kategorin finns redan.");
+            }
 
-    public void RedigeraKategori(string gammaltNamn, string nyttNamn)
+            // Lägg till kategorin om den inte finns
+            Kategori nyKategori = new Kategori { Namn = kategoriNamn };
+            kategoriRepository.LaggTill(nyKategori);
+        }
+
+        public void RedigeraKategori(string gammaltNamn, string nyttNamn)
     {
        
 

@@ -9,5 +9,6 @@ namespace Models
     public class Kategori
     {
         public string Namn {  get; set; } 
+        public string Beskrivning { get; set; }
     }
 }

@@ -33,8 +33,21 @@ namespace DL
 
         public void LaggTill(Kategori item)
         {
-            throw new NotImplementedException();
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item), "Kategori kan inte vara null.");
+            }
+
+            // Här kan vi kolla om kategorin redan finns om det är viktigt
+            if (kategoriLista.Any(k => k.Namn == item.Namn))
+            {
+                throw new InvalidOperationException("Kategorin finns redan.");
+            }
+
+            // Lägger till kategorin i listan
+            kategoriLista.Add(item);
         }
+
 
         public void TaBort(string kategoriNamn)
         {
@@ -53,9 +66,23 @@ namespace DL
         {
             return kategoriLista.Any(k => k.Namn == kategoriNamn);
         }
-    
 
-    public void Redigera(string gammaltNamn, string nyttNamn)
+        public void Uppdatera(Kategori uppdateradKategori)
+        {
+            var kategori = kategoriLista.FirstOrDefault(k => k.Namn == uppdateradKategori.Namn);
+            if (kategori != null)
+            {
+                kategori.Beskrivning = uppdateradKategori.Beskrivning; // Uppdaterar beskrivning
+            }
+            else
+            {
+                throw new ArgumentException("Kategorin hittades inte.");
+            }
+        }
+
+
+
+        public void Redigera(string gammaltNamn, string nyttNamn)
     {
         Kategori kategori = kategoriLista.FirstOrDefault(k => k.Namn == gammaltNamn);
         if (kategori == null)

@@ -18,6 +18,7 @@ namespace PoddGrupp
         private PoddcastController poddcastController;
         private List<Poddcast> poddcastLista = new List<Poddcast>(); // Lista som håller alla poddavsnitt
         private KategoriController kategoriController;
+        private List<Kategori> kategoriLista = new List<Kategori>();
 
         public PoddcastVisare()
         {
@@ -43,6 +44,15 @@ namespace PoddGrupp
             cbAndra.SelectedIndex = 0; // Sätt standardval
 
             listaAvsnitt.SelectedIndexChanged += listaAvsnitt_SelectedIndexChanged;
+            FyllKategoriComboBoxOchLista();
+        }
+        private void FyllKategoriComboBoxOchLista()
+        {
+            cbKategori.Items.Clear();
+            listaKategorier.Items.Clear();
+            var allaKategorier = kategoriController.HamtaAllaKategorier().Select(k => k.Namn).ToArray();
+            cbKategori.Items.AddRange(allaKategorier);
+            listaKategorier.Items.AddRange(allaKategorier);
         }
 
         //Hämtar och visar namnen på alla podcast i en lista i användargränssnittet
@@ -198,41 +208,40 @@ namespace PoddGrupp
 
         private void btnTaBortKategori_Click(object sender, EventArgs e)
         {
-                //Kontroller att man har valt en kategori i listan
-                if (listaKategorier.SelectedItem == null)
+            //Kontroller att man har valt en kategori i listan
+            if (listaKategorier.SelectedItem == null)
+            {
+                MessageBox.Show("Vänligen välj en kategori från listan till höger");
+                return;
+            }
+
+            string kategoriNamn = listaKategorier.SelectedItem.ToString();
+
+            DialogResult result = MessageBox.Show("Är du säker på att du vill ta bort " + kategoriNamn + "?", "Bekräftelse", MessageBoxButtons.YesNo);
+
+            if (result == DialogResult.Yes)
+            {
+                try
                 {
-                    MessageBox.Show("Vänligen välj en kategori från listan till höger");
-                    return;
+                    kategoriController.TaBortKategori(kategoriNamn);
+                    MessageBox.Show("Kategorin har tagits bort"); //" och flöden har flyttats till 'Okategoriserad'."
+
+                    FyllKategoriLista(cbKategori);
+                    FyllKategoriLista(listaKategorier);
+                }
+                catch (ArgumentException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message);
                 }
 
-                string kategoriNamn = listaKategorier.SelectedItem.ToString();
-
-                DialogResult result = MessageBox.Show("Är du säker på att du vill ta bort " + kategoriNamn + "?", "Bekräftelse", MessageBoxButtons.YesNo);
-
-                if (result == DialogResult.Yes)
-                {
-                    try
-                    {
-                        kategoriController.TaBortKategori(kategoriNamn);
-                        MessageBox.Show("Kategorin har tagits bort"); //" och flöden har flyttats till 'Okategoriserad'."
-
-                        FyllKategoriLista(cbKategori);
-                        FyllKategoriLista(listaKategorier);
-                    }
-                    catch (ArgumentException ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
-
-                    // Rensa textfältet
-                    tbNamnKategori.Text = "";
-                }
+                // Rensa textfältet
+                tbNamnKategori.Text = "";
+            }
         }
-
 
         private void btnAndra_Click(object sender, EventArgs e)
 
@@ -246,10 +255,10 @@ namespace PoddGrupp
             }
             string val = cbAndra.SelectedItem.ToString();
 
-            if ( val == "Ändra kategori")
+            if (val == "Ändra kategori")
             {
                 string gammaltKategoriNamn = listViewPodd.SelectedItems[0].SubItems[1].Text; // Kategori är på index 1
-               
+
                 string nyKategori = cbKategori.SelectedItem.ToString();
 
                 try
@@ -269,8 +278,8 @@ namespace PoddGrupp
                 {
                     MessageBox.Show($"Ett fel inträffade: {ex.Message}");
                 }
-            } 
-             else if (val == "Ändra namn")
+            }
+            else if (val == "Ändra namn")
 
             {            // Hämta det gamla namnet från den valda poddcasten
                 string gammaltNamn = listViewPodd.SelectedItems[0].SubItems[0].Text;
@@ -304,11 +313,36 @@ namespace PoddGrupp
 
 
 
-    private void PoddcastVisare_FormClosing(object sender, FormClosingEventArgs e)
-    {
-        poddcastController.SparaData();
-}
-}
+        private void PoddcastVisare_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            poddcastController.SparaData();
+        }
+
+        private void btnLaggTillKategori_Click_1(object sender, EventArgs e)
+        {
+            FyllKategoriComboBoxOchLista();
+            string nyKategori = tbNamnKategori.Text.Trim();
+
+            if (!string.IsNullOrWhiteSpace(nyKategori))
+            {
+                try
+                {
+                    kategoriController.LaggTillKategori(nyKategori); // Här anropas metoden
+                    FyllKategoriComboBoxOchLista(); // Uppdaterar listan
+                    tbNamnKategori.Clear(); // Rensar fältet
+                    MessageBox.Show("Kategorin har lagts till.");
+                }
+                catch (ArgumentException ex)
+                {
+                    MessageBox.Show(ex.Message); // Visa felmeddelande om något går fel
+                }
+            }
+            else
+            {
+                MessageBox.Show("Kategorinamn kan inte vara tomt."); // Kontrollera om textfältet är tomt
+            }
+        }
+    }
 }
 
 
