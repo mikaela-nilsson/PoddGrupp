@@ -190,10 +190,15 @@ namespace DL
         {
             var beskrivningar = HamtaAvsnittsBeskrivningar(poddcast.RSS);
             poddcast.AvsnittBeskrivning.Clear(); 
-            poddcast.AvsnittBeskrivning.AddRange(beskrivningar); 
+            poddcast.AvsnittBeskrivning.AddRange(beskrivningar);
         }
     }
 }
+
+
+
+
+
 
 
 

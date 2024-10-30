@@ -1,4 +1,5 @@
 ﻿using BL;
+using DL;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace PoddGrupp
         private List<Poddcast> poddcastLista = new List<Poddcast>(); // Lista som håller alla poddavsnitt
         private KategoriController kategoriController;
         private List<Kategori> kategoriLista = new List<Kategori>();
+        private PoddRepository poddRepository = new PoddRepository();
 
         public PoddcastVisare()
         {
@@ -26,6 +28,7 @@ namespace PoddGrupp
             poddcastController = new PoddcastController();
             kategoriController = new KategoriController();
             btnAndra.Click += btnAndra_Click;
+            btnAterstall.Click += btnAterstall_Click;
             this.FormClosing += new FormClosingEventHandler(PoddcastVisare_FormClosing);
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
 
@@ -448,10 +451,45 @@ namespace PoddGrupp
                     item.SubItems.Add(podd.Kategori);
                     listViewPodd.Items.Add(item);
                 }
+
+
+            }
+
+        }
+        private void btnAterstall_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string filnamn = "din_sparade_fil.xml"; // Sätt namnet på din sparade XML-fil här
+
+                // Ladda poddar från XML-filen
+                poddRepository.LaddaDataFranXml(filnamn);
+
+                // Anropa metoden för att fylla listan efter återställning
+                FyllFlodeLista();
+
+                MessageBox.Show("Poddarna har återställts till det senaste sparade tillståndet.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ett fel inträffade vid återställning: {ex.Message}");
             }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
