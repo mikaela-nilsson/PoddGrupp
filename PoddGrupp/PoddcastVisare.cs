@@ -50,7 +50,6 @@ namespace PoddGrupp
 
             listaAvsnitt.SelectedIndexChanged += listaAvsnitt_SelectedIndexChanged;
             FyllKategoriComboBoxOchLista();
-            cbKategori.SelectedIndex = 0; //Sätter standardvalet för kategori
         }
         private void FyllKategoriComboBoxOchLista()
         {
@@ -61,7 +60,9 @@ namespace PoddGrupp
             cbKategori.Items.AddRange(allaKategorier);
             listaKategorier.Items.AddRange(allaKategorier);
             comboBox1.Items.AddRange(allaKategorier);
-            
+
+            cbKategori.SelectedIndex = 0; //Sätter standardvalet för kategori
+
         }
 
         //Hämtar och visar namnen på alla podcast i en lista i användargränssnittet
@@ -107,14 +108,10 @@ namespace PoddGrupp
 
             var poddcastController = new PoddcastController();
 
-            // Anropa metoden för att lägga till en poddcast asynkront
-            await poddcastController.LaggTillPoddcastMedRssAsync(rssUrl, namn, kategori);
-
-
             try
             {
-                // Lägg till poddcasten i systemet
-                poddcastController.LaggTillFlode(rssUrl, namn, kategori);
+                // Anropa metoden för att lägga till en poddcast asynkront
+                await poddcastController.LaggTillPoddcastMedRssAsync(rssUrl, namn, kategori);
 
                 // Hämta avsnitt och deras beskrivningar
                 List<string> avsnittTitlar = poddcastController.HamtaPoddcastAvsnitt(rssUrl);
@@ -149,8 +146,6 @@ namespace PoddGrupp
             tbRSS.Text = "";
             tbNamn.Text = "";
         }
-
-
 
         private void btnTaBort_Click(object sender, EventArgs e)
         {
@@ -313,6 +308,7 @@ namespace PoddGrupp
 
                     // Uppdatera listan för att visa det nya namnet
                     FyllFlodeLista();
+                    tbNamn.Clear();
                 }
                 catch (ArgumentException ex)
                 {

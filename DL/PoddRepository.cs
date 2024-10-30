@@ -18,8 +18,8 @@ namespace DL
 
         public void LaggTill(Poddcast poddcast)
         {
+            // Lägga till flödet om det är unikt
             poddcastLista.Add(poddcast);
-            FyllAvsnittBeskrivningar(poddcast);
         }
 
 
@@ -172,6 +172,8 @@ namespace DL
             }
 
         }
+
+
         
         //Hämtar ett visst Poddcast objekt med dess namn
         public Poddcast HamtaPoddMedNamn(string poddNamn)

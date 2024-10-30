@@ -47,27 +47,24 @@ namespace BL
         }
         public async Task LaggTillPoddcastMedRssAsync(string rssUrl, string namn, string kategori)
         {
-            try
+            if (string.IsNullOrWhiteSpace(rssUrl)) throw new ArgumentException("Vänligen fyll i fältet för RSS-länk.");
+            if (string.IsNullOrWhiteSpace(namn)) throw new ArgumentException("Vänligen fyll i fältet för Namn.");
+
+            // Anropa valideringsmetoden för att kontrollera unika namn och RSS-länkar
+            var resultat = ValideraNyFlode(rssUrl, namn);
+            if (!resultat.isValid) throw new ArgumentException(resultat.meddelande);
+
+            List<string> avsnitt = HamtaPoddcastAvsnitt(rssUrl);
+
+            var nyttFlode = new Poddcast
             {
-                // Hämta innehåll från RSS-länken asynkront
-                string rssInnehall = await rssFetcher.HamtaRssInnehallAsync(rssUrl);
+                RSS = rssUrl,
+                Namn = namn,
+                Kategori = kategori,
+                Avsnitt = avsnitt
+            };
 
-                // Skapa ett nytt Poddcast-objekt och fyll det med relevant data
-                Poddcast nyPoddcast = new Poddcast
-                {
-                    Namn = namn,
-                    Kategori = kategori,
-                    RSS = rssUrl,
-                    Innehall = rssInnehall  // Om du har ett fält för att spara innehåll i din Poddcast-modell
-                };
-
-
-                Console.WriteLine($"Podcast '{namn}' har lagts till.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Fel vid hämtning av RSS: {ex.Message}");
-            }
+            poddRepository.LaggTill(nyttFlode);
         }
 
 
@@ -80,7 +77,15 @@ namespace BL
         // Hämtar och sparar poddcast från RSS-flöde till repository 
         public void HamtaPoddcastInformation(string rssLank)
         {
-            HamtaPoddcastInformation(rssLank);
+            List<string> avsnitt = poddRepository.HamtaAvsnitt(rssLank);
+            // Skapa eller uppdatera ett Poddcast-objekt med hämtade avsnitt, eller spara avsnitten till repository
+            var podd = new Poddcast
+            {
+                RSS = rssLank,
+                Avsnitt = avsnitt,
+                Namn = "Namn på Poddcast" // Ange namn eller hämta från repository
+            };
+            poddRepository.LaggTill(podd); // Lägg till podd i repository om den är ny
         }
 
         //!!!!OBS!!! DETTA ÄR ETT EXEMPEL PÅ EN METODÖVERLAGRING (FYLLER INGEN FUNKTION-- BARA EXEMPEL :D)
@@ -116,27 +121,6 @@ namespace BL
 
             // Om valideringen lyckades
             return (true, string.Empty);
-        }
-
-        public void LaggTillFlode(string rssLank, string namn, string kategori)
-        {
-            if (string.IsNullOrWhiteSpace(rssLank)) throw new ArgumentException("Vänligen fyll i fältet för RSS-länk.");
-            if (string.IsNullOrWhiteSpace(namn)) throw new ArgumentException("Vänligen fyll i fältet för Namn.");
-
-            var resultat = ValideraNyFlode(rssLank, namn);
-            if (!resultat.isValid) throw new ArgumentException(resultat.meddelande);
-
-            List<string> avsnitt = HamtaPoddcastAvsnitt(rssLank);
-
-            var nyttFlode = new Poddcast
-            {
-                RSS = rssLank,
-                Namn = namn,
-                Kategori = kategori,
-                Avsnitt = avsnitt
-            };
-
-            poddRepository.LaggTill(nyttFlode);
         }
 
         public void TaBortFlode(string namn)
