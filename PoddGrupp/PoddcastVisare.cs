@@ -34,10 +34,9 @@ namespace PoddGrupp
         //en lista med med poddcastflöden när formuläret visas för användaren
         private void PoddcastVisare_Load(object sender, EventArgs e)
         {
+            poddcastLista.Clear(); //Rensar poddcastListan
+            poddcastLista = poddcastController.HamtaAllaPoddcast(); //Fyller poddcastLista med Poddcast objekt
             FyllFlodeLista();
-            FyllKategoriLista(cbKategori);
-            FyllKategoriLista(listaKategorier);
-            cbKategori.SelectedIndex = 0;
 
             cbAndra.Items.Add("Ändra namn");
             cbAndra.Items.Add("Ändra kategori");
@@ -45,6 +44,7 @@ namespace PoddGrupp
 
             listaAvsnitt.SelectedIndexChanged += listaAvsnitt_SelectedIndexChanged;
             FyllKategoriComboBoxOchLista();
+            cbKategori.SelectedIndex = 0; //Sätter standardvalet för kategori
         }
         private void FyllKategoriComboBoxOchLista()
         {
@@ -70,18 +70,6 @@ namespace PoddGrupp
             })
                 .ToArray());
         }
-
-        //Hämtar och visar namnen på alla kategorier i listan och comboboxen
-        private void FyllKategoriLista(dynamic listaNamn)
-        {
-            //Rensar comboboxen eller listan för kategorier
-            listaNamn.Items.Clear();
-
-            var allaKategorier = kategoriController.HamtaAllaKategorier();
-
-            listaNamn.Items.AddRange(allaKategorier.Select(kategori => kategori.Namn).ToArray());
-        }
-
 
         private void listaAvsnitt_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -224,10 +212,18 @@ namespace PoddGrupp
                 try
                 {
                     kategoriController.TaBortKategori(kategoriNamn);
-                    MessageBox.Show("Kategorin har tagits bort"); //" och flöden har flyttats till 'Okategoriserad'."
+                    var poddarAttUppdatera = poddcastController.HamtaAllaPoddcastMedKategori(kategoriNamn);
 
-                    FyllKategoriLista(cbKategori);
-                    FyllKategoriLista(listaKategorier);
+                    //Uppdatera flödena till att få kategorin "Okategoriserad"
+                    foreach (var podd in poddarAttUppdatera)
+                    {
+                        poddcastController.AndraPoddcastKategori(podd.Namn, "Okategoriserad");
+                    }
+
+                    MessageBox.Show("Kategorin har tagits bort och flödena har uppdaterats till 'Okategoriserad'");
+
+                    FyllKategoriComboBoxOchLista();
+                    FyllFlodeLista();
                 }
                 catch (ArgumentException ex)
                 {
@@ -246,13 +242,13 @@ namespace PoddGrupp
         private void btnAndra_Click(object sender, EventArgs e)
 
         {
-
             // Kontrollera att en poddcast är vald
             if (listViewPodd.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Vänligen välj en poddcast från listan.");
                 return;
             }
+
             string val = cbAndra.SelectedItem.ToString();
 
             if (val == "Ändra kategori")
@@ -261,14 +257,17 @@ namespace PoddGrupp
 
                 string nyKategori = cbKategori.SelectedItem.ToString();
 
+                string valtPoddNamn = listViewPodd.SelectedItems[0].Text;
+
                 try
                 {
-                    // Kalla på metoden för att ändra kategorin
-                    kategoriController.RedigeraKategori(gammaltKategoriNamn, nyKategori);
-                    MessageBox.Show("Kategorin har ändrats.");
+                    poddcastController.AndraPoddcastKategori(valtPoddNamn, nyKategori);
 
                     // Uppdatera listan för att visa den nya kategorin
                     FyllFlodeLista();
+
+                    MessageBox.Show("Kategorin har ändrats.");
+
                 }
                 catch (ArgumentException ex)
                 {
@@ -357,6 +356,13 @@ namespace PoddGrupp
             // Hämta den valda kategorin
             string gammaltKategoriNamn = listaKategorier.SelectedItem.ToString();
 
+            //Kontrollerar om man försöker ändra kategorin "Okategoriserad"
+            if (gammaltKategoriNamn == "Okategoriserad")
+            {
+                MessageBox.Show("Kategorin 'Okategoriserad' kan inte ändras.");
+                return;
+            }
+
             // Hämta det nya namnet från en TextBox
             string nyttKategoriNamn = tbNamnKategori.Text.Trim(); // Anta att tbNamnKategori är TextBoxen
 
@@ -371,8 +377,17 @@ namespace PoddGrupp
                 // Anropa metoden för att ändra namnet
                 kategoriController.RedigeraKategori(gammaltKategoriNamn, nyttKategoriNamn);
 
-                // Uppdatera listan för att visa det nya namnet
-                FyllKategoriLista(listaKategorier);
+                //Hämtar alla Poddcast objekt med den ändrade kategorin
+                var poddarAttUppdatera = poddcastController.HamtaAllaPoddcastMedKategori(gammaltKategoriNamn);
+                //Ändrar varje hämtad Poddcast och ändrar dess kategori
+                foreach (var podd in poddarAttUppdatera)
+                {
+                    poddcastController.AndraPoddcastKategori(podd.Namn, nyttKategoriNamn);
+                }
+
+                // Uppdatera listorna för att visa det nya namnet
+                FyllKategoriComboBoxOchLista();
+                FyllFlodeLista();
 
                 MessageBox.Show("Kategorin har ändrats.");
 

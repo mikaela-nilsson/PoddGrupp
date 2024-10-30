@@ -27,7 +27,18 @@ namespace BL
             poddRepository.LaddaDataFranXml("data.xml");
         }
 
+        //Metod som ändrar ett visst poddcast objekts kategori
+        public void AndraPoddcastKategori(string poddNamn, string nyttKategoriNamn)
+        {
+            Poddcast poddcast = poddRepository.HamtaPoddMedNamn(poddNamn);
+            poddRepository.AndraPoddcastKategori(poddcast, nyttKategoriNamn);
+        }
 
+        //Metod som hämtar alla Poddcast objekt som tillhör en viss Kategori
+        public List<Poddcast> HamtaAllaPoddcastMedKategori(string kategoriNamn)
+        {
+            return poddRepository.HamtaAlla().Where(p => p.Kategori == kategoriNamn).ToList();
+        }
 
         // Hämtar alla poddcast från repository
         public List<Poddcast> HamtaAllaPoddcast()

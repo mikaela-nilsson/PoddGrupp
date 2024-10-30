@@ -19,6 +19,7 @@ namespace DL
         public void LaggTill(Poddcast poddcast)
         {
             poddcastLista.Add(poddcast);
+            FyllAvsnittBeskrivningar(poddcast);
         }
 
 
@@ -53,7 +54,15 @@ namespace DL
                 var serializer = new XmlSerializer(typeof(List<Poddcast>));
                 using (var reader = new StreamReader(filnamn))
                 {
-                    poddcastLista = (List<Poddcast>)serializer.Deserialize(reader);
+                    var loadedPoddcasts = (List<Poddcast>)serializer.Deserialize(reader);
+                    foreach (var poddcast in loadedPoddcasts)
+                    {
+                        // Check if it already exists
+                        if (!poddcastLista.Any(p => p.Namn == poddcast.Namn))
+                        {
+                            poddcastLista.Add(poddcast);
+                        }
+                    }
                 }
             }
         }
@@ -150,28 +159,41 @@ namespace DL
             }
         }
     
+        public void RedigeraFlodeNamn(string gammaltNamn, string nyttNamn)
+        {
+            var befintligPodd = poddcastLista.FirstOrDefault(f => f.Namn == gammaltNamn);
+            if (befintligPodd != null)
+            {
+                befintligPodd.Namn = nyttNamn;
+            }
+            else
+            {
+                throw new ArgumentException("Poddcast med det angivna namnet hittades inte.");
+            }
 
+        }
+        
+        //Hämtar ett visst Poddcast objekt med dess namn
+        public Poddcast HamtaPoddMedNamn(string poddNamn)
+        {
+            return poddcastLista.FirstOrDefault(p => p.Namn == poddNamn);
+        }
 
+        //Ändrar ett visst Poddcast objekts Kategori
+        public void AndraPoddcastKategori(Poddcast poddcast, string nyttKategoriNamn)
+        {
+            poddcast.Kategori = nyttKategoriNamn;
+        }
 
-
-
-
-public void RedigeraFlodeNamn(string gammaltNamn, string nyttNamn)
-{
-    var befintligPodd = poddcastLista.FirstOrDefault(f => f.Namn == gammaltNamn);
-    if (befintligPodd != null)
-    {
-        befintligPodd.Namn = nyttNamn;
-    }
-    else
-    {
-        throw new ArgumentException("Poddcast med det angivna namnet hittades inte.");
-    }
-
+        //Fyller listan med AvsnittsBeskrivningar
+        public void FyllAvsnittBeskrivningar(Poddcast poddcast)
+        {
+            var beskrivningar = HamtaAvsnittsBeskrivningar(poddcast.RSS);
+            poddcast.AvsnittBeskrivning.Clear(); // Clear existing descriptions
+            poddcast.AvsnittBeskrivning.AddRange(beskrivningar); // Add new ones
         }
     }
 }
-
 
 
 
