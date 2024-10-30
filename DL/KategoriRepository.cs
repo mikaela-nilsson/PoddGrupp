@@ -99,6 +99,43 @@ namespace DL
         kategori.Namn = nyttNamn;
         // Lägg till logik för att spara ändringar i databas eller fil
     }
-}
+        public void SparaKategorierTillFil(string filnamn)
+        {
+            using (var writer = new StreamWriter(filnamn))
+            {
+                foreach (var kategori in kategoriLista)
+                {
+                    writer.WriteLine($"{kategori.Namn}|{kategori.Beskrivning}");
+                }
+            }
+        }
+        public void LasInKategorierFranFil(string filnamn)
+        {
+            if (!File.Exists(filnamn))
+            {
+                return; // Om filen inte finns, hoppa över att läsa in
+            }
+
+            using (var reader = new StreamReader(filnamn))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    var delar = line.Split('|');
+                    if (delar.Length == 2)
+                    {
+                        string namn = delar[0];
+                        string beskrivning = delar[1];
+
+                        if (!KategoriFinns(namn))
+                        {
+                            kategoriLista.Add(new Kategori { Namn = namn, Beskrivning = beskrivning });
+                        }
+                    }
+                }
+            }
+        }
+
+    }
 }
 

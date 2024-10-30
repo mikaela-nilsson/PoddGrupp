@@ -12,10 +12,19 @@ namespace BL
     public class KategoriController
     {
         private KategoriRepository kategoriRepository;
+        private const string Filnamn = "kategorier.txt"; // Flyttad hit till klassen
+
 
         public KategoriController()
         {
             kategoriRepository = new KategoriRepository();
+
+            kategoriRepository.LasInKategorierFranFil(Filnamn); // Ladda kategorier vid start
+        }
+
+        public void SparaKategorier()
+        {
+            kategoriRepository.SparaKategorierTillFil(Filnamn); // Spara kategorier innan avslut
         }
         public IEnumerable<Kategori> HamtaAllaKategorier()
         {
@@ -56,6 +65,7 @@ namespace BL
         // Ändra kategorin via repository
         kategoriRepository.Redigera(gammaltNamn, nyttNamn);
     }
+
 }
 
 }

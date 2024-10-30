@@ -315,8 +315,10 @@ namespace PoddGrupp
 
         private void PoddcastVisare_FormClosing(object sender, FormClosingEventArgs e)
         {
-            poddcastController.SparaData();
+            poddcastController.SparaData(); // Spara podcasts
+            kategoriController.SparaKategorier(); // Spara kategorier
         }
+
 
         private void btnLaggTillKategori_Click_1(object sender, EventArgs e)
         {
