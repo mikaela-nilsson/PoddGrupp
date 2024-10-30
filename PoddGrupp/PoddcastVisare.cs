@@ -460,7 +460,7 @@ namespace PoddGrupp
         {
             try
             {
-                string filnamn = "din_sparade_fil.xml"; // Sätt namnet på din sparade XML-fil här
+                string filnamn = "data.xml"; // Sätt namnet på din sparade XML-fil här
 
                 // Ladda poddar från XML-filen
                 poddRepository.LaddaDataFranXml(filnamn);
