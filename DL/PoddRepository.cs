@@ -57,7 +57,7 @@ namespace DL
                     var loadedPoddcasts = (List<Poddcast>)serializer.Deserialize(reader);
                     foreach (var poddcast in loadedPoddcasts)
                     {
-                        // Check if it already exists
+                        
                         if (!poddcastLista.Any(p => p.Namn == poddcast.Namn))
                         {
                             poddcastLista.Add(poddcast);
@@ -189,8 +189,8 @@ namespace DL
         public void FyllAvsnittBeskrivningar(Poddcast poddcast)
         {
             var beskrivningar = HamtaAvsnittsBeskrivningar(poddcast.RSS);
-            poddcast.AvsnittBeskrivning.Clear(); // Clear existing descriptions
-            poddcast.AvsnittBeskrivning.AddRange(beskrivningar); // Add new ones
+            poddcast.AvsnittBeskrivning.Clear(); 
+            poddcast.AvsnittBeskrivning.AddRange(beskrivningar); 
         }
     }
 }

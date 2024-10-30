@@ -31,7 +31,7 @@ namespace PoddGrupp
         }
 
         //Metod som körs när formuläret laddas. Den anropar en annan metod (FyllFlodeLista) för att fylla 
-        //en lista med med poddcastflöden när formuläret visas för användaren
+        //en lista med poddcastflöden när formuläret visas för användaren
         private void PoddcastVisare_Load(object sender, EventArgs e)
         {
             poddcastLista.Clear(); //Rensar poddcastListan
@@ -364,7 +364,7 @@ namespace PoddGrupp
             }
 
             // Hämta det nya namnet från en TextBox
-            string nyttKategoriNamn = tbNamnKategori.Text.Trim(); // Anta att tbNamnKategori är TextBoxen
+            string nyttKategoriNamn = tbNamnKategori.Text.Trim(); 
 
             if (string.IsNullOrWhiteSpace(nyttKategoriNamn))
             {
