@@ -27,6 +27,8 @@ namespace PoddGrupp
             kategoriController = new KategoriController();
             btnAndra.Click += btnAndra_Click;
             this.FormClosing += new FormClosingEventHandler(PoddcastVisare_FormClosing);
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+
 
         }
 
@@ -37,6 +39,7 @@ namespace PoddGrupp
             poddcastLista.Clear(); //Rensar poddcastListan
             poddcastLista = poddcastController.HamtaAllaPoddcast(); //Fyller poddcastLista med Poddcast objekt
             FyllFlodeLista();
+            FyllComboBoxMedKategorier(); // Fyller kategorier i comboboxen
 
             cbAndra.Items.Add("Ändra namn");
             cbAndra.Items.Add("Ändra kategori");
@@ -50,9 +53,12 @@ namespace PoddGrupp
         {
             cbKategori.Items.Clear();
             listaKategorier.Items.Clear();
+            comboBox1.Items.Clear();
             var allaKategorier = kategoriController.HamtaAllaKategorier().Select(k => k.Namn).ToArray();
             cbKategori.Items.AddRange(allaKategorier);
             listaKategorier.Items.AddRange(allaKategorier);
+            comboBox1.Items.AddRange(allaKategorier);
+            
         }
 
         //Hämtar och visar namnen på alla podcast i en lista i användargränssnittet
@@ -401,6 +407,47 @@ namespace PoddGrupp
             catch (Exception ex)
             {
                 MessageBox.Show($"Ett fel inträffade: {ex.Message}");
+            }
+        }
+
+        private void FyllComboBoxMedKategorier()
+        {
+            // Töm comboboxen först för att undvika dubbletter
+            comboBox1.Items.Clear();
+
+            // Hämta alla kategorier från kategoriController
+            var kategorier = kategoriController.HamtaAllaKategorier();
+
+            // Lägg till varje kategori i comboboxen
+            foreach (var kategori in kategorier)
+            {
+                comboBox1.Items.Add(kategori.Namn);
+            }
+        }
+
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Kontrollera att något är valt
+            if (comboBox1.SelectedItem != null)
+            {
+                // Hämta vald kategori
+                string valdKategori = comboBox1.SelectedItem.ToString();
+
+                // Hämta alla poddar och filtrera dem efter den valda kategorin
+                var filtreradePoddar = poddcastController.HamtaAllaPoddcast()
+                    .Where(podd => podd.Kategori == valdKategori).ToList();
+
+                // Töm listan som visar poddar
+                listViewPodd.Items.Clear();
+
+                // Lägg till filtrerade poddar till listView
+                foreach (var podd in filtreradePoddar)
+                {
+                    ListViewItem item = new ListViewItem(podd.Namn);
+                    item.SubItems.Add(podd.Kategori);
+                    listViewPodd.Items.Add(item);
+                }
             }
         }
     }

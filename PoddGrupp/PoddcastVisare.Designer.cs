@@ -271,6 +271,7 @@ namespace PoddGrupp
             comboBox1.Size = new Size(180, 23);
             comboBox1.TabIndex = 25;
             comboBox1.Text = "Filtrera utifrån kategori...";
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // lblNamnPaKategori
             // 
