@@ -23,5 +23,7 @@ namespace Models
         [XmlArray("Avsnitt")] // Namnet på array-elementet
         [XmlArrayItem("AvsnittNamn")] // Namnet på varje avsnitt
         public List<string> Avsnitt { get; set; } = new List<string>();
+        // Lägg till denna egenskap för att spara RSS-innehållet
+        public string Innehall { get; set; }
     }
 }

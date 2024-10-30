@@ -10,12 +10,18 @@ namespace BL
     {
         private PoddRepository poddRepository;
 
+        private readonly RssFetcher rssFetcher;
         public PoddcastController()
         {
             poddRepository = new PoddRepository();
-             LaddaPoddcastData();
+            LaddaPoddcastData();
+            rssFetcher = new RssFetcher();
         }
-
+        // Använder den asynkrona metoden för att hämta RSS-innehåll
+        public async Task<string> HamtaRssInnehallAsync(string rssUrl)
+        {
+            return await rssFetcher.HamtaRssInnehallAsync(rssUrl);
+        }
 
         public void SparaData()
         {
@@ -39,6 +45,31 @@ namespace BL
         {
             return poddRepository.HamtaAlla().Where(p => p.Kategori == kategoriNamn).ToList();
         }
+        public async Task LaggTillPoddcastMedRssAsync(string rssUrl, string namn, string kategori)
+        {
+            try
+            {
+                // Hämta innehåll från RSS-länken asynkront
+                string rssInnehall = await rssFetcher.HamtaRssInnehallAsync(rssUrl);
+
+                // Skapa ett nytt Poddcast-objekt och fyll det med relevant data
+                Poddcast nyPoddcast = new Poddcast
+                {
+                    Namn = namn,
+                    Kategori = kategori,
+                    RSS = rssUrl,
+                    Innehall = rssInnehall  // Om du har ett fält för att spara innehåll i din Poddcast-modell
+                };
+
+
+                Console.WriteLine($"Podcast '{namn}' har lagts till.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Fel vid hämtning av RSS: {ex.Message}");
+            }
+        }
+
 
         // Hämtar alla poddcast från repository
         public List<Poddcast> HamtaAllaPoddcast()

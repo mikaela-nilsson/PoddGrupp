@@ -99,11 +99,17 @@ namespace PoddGrupp
         }
 
         //Denna metod lägger till poddcast i listan, hämtar avsnitt som tillhör den podcast du klickar på och hämtar beskrivning för det avsnitt som användaren klickar på. 
-        private void btnLaggTill_Click(object sender, EventArgs e)
+        private async void btnLaggTill_Click(object sender, EventArgs e)
         {
             string rssUrl = tbRSS.Text;
             string kategori = cbKategori.SelectedItem.ToString();
             string namn = tbNamn.Text;
+
+            var poddcastController = new PoddcastController();
+
+            // Anropa metoden för att lägga till en poddcast asynkront
+            await poddcastController.LaggTillPoddcastMedRssAsync(rssUrl, namn, kategori);
+
 
             try
             {
