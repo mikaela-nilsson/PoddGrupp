@@ -375,7 +375,7 @@ namespace PoddGrupp
             }
 
             // Hämta det nya namnet från en TextBox
-            string nyttKategoriNamn = tbNamnKategori.Text.Trim(); 
+            string nyttKategoriNamn = tbNamnKategori.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(nyttKategoriNamn))
             {
@@ -477,6 +477,8 @@ namespace PoddGrupp
                 MessageBox.Show($"Ett fel inträffade vid återställning: {ex.Message}");
             }
         }
+
+        
     }
 }
 

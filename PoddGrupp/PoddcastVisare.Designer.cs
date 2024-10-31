@@ -14,7 +14,6 @@ namespace PoddGrupp
         /// </summary>
         private void InitializeComponent()
         {
-            ListViewItem listViewItem1 = new ListViewItem("j");
             lblPoddcast = new Label();
             tbNamn = new TextBox();
             lblNamnPaFlodet = new Label();
@@ -41,6 +40,7 @@ namespace PoddGrupp
             columnNamn = new ColumnHeader();
             columnKategori = new ColumnHeader();
             cbAndra = new ComboBox();
+            lblBeskrivning = new Label();
             SuspendLayout();
             // 
             // lblPoddcast
@@ -285,7 +285,6 @@ namespace PoddGrupp
             // listViewPodd
             // 
             listViewPodd.Columns.AddRange(new ColumnHeader[] { columnNamn, columnKategori });
-            listViewPodd.Items.AddRange(new ListViewItem[] { listViewItem1 });
             listViewPodd.Location = new Point(155, 45);
             listViewPodd.Name = "listViewPodd";
             listViewPodd.Size = new Size(197, 346);
@@ -313,12 +312,24 @@ namespace PoddGrupp
             cbAndra.Size = new Size(132, 23);
             cbAndra.TabIndex = 28;
             // 
+            // lblBeskrivning
+            // 
+            lblBeskrivning.AutoSize = true;
+            lblBeskrivning.Font = new Font("Microsoft Sans Serif", 18F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
+            lblBeskrivning.ForeColor = Color.Sienna;
+            lblBeskrivning.Location = new Point(1065, 9);
+            lblBeskrivning.Name = "lblBeskrivning";
+            lblBeskrivning.Size = new Size(149, 29);
+            lblBeskrivning.TabIndex = 29;
+            lblBeskrivning.Text = "Beskrivning";
+            // 
             // PoddcastVisare
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LemonChiffon;
             ClientSize = new Size(1375, 651);
+            Controls.Add(lblBeskrivning);
             Controls.Add(cbAndra);
             Controls.Add(listViewPodd);
             Controls.Add(lblNamnPaKategori);
@@ -379,6 +390,7 @@ namespace PoddGrupp
         private ColumnHeader columnNamn;
         private ColumnHeader columnKategori;
         private ComboBox cbAndra;
+        private Label lblBeskrivning;
     }
 }
 
