@@ -88,7 +88,6 @@ namespace BL
             poddRepository.LaggTill(podd); // Lägg till podd i repository om den är ny
         }
 
-        //!!!!OBS!!! DETTA ÄR ETT EXEMPEL PÅ EN METODÖVERLAGRING (FYLLER INGEN FUNKTION-- BARA EXEMPEL :D)
         public void HamtaPoddcastInformation(string rssLank, string namn)
         {
             HamtaPoddcastInformation(rssLank);

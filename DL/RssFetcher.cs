@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace DL // Använd ditt projekts namespace om det inte är DL
+namespace DL
 {
     public class RssFetcher
     {
