@@ -8,6 +8,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -93,9 +94,23 @@ namespace PoddGrupp
                 // Hämta det valda avsnittets index
                 int valtAvsnittsIndex = listaAvsnitt.SelectedIndex;
 
-                // Visa rätt beskrivning för det valda avsnittet
-                beskrivningAvsnitt.Clear();
-                beskrivningAvsnitt.AppendText(valdPoddcast.AvsnittBeskrivning[valtAvsnittsIndex]);
+                string valtAsvnittsBeskrivning = valdPoddcast.AvsnittBeskrivning[valtAvsnittsIndex];
+
+                if (!string.IsNullOrEmpty(valtAsvnittsBeskrivning))
+                {
+                    // Ta bort HTML-taggarna från beskrivningen med Regex
+                    string rensadBeskrivning = Regex.Replace(valtAsvnittsBeskrivning, "<.*?>", String.Empty);
+
+                    // Visa den rensade beskrivningen i textfältet
+                    beskrivningAvsnitt.Text = rensadBeskrivning;
+                }
+                else
+                {
+                    // Rensa textfältet om ingen beskrivning finns
+                    beskrivningAvsnitt.Clear();
+                }
+
+
             }
         }
 
